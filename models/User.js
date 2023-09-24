@@ -1,10 +1,8 @@
+import savedArtists from './savedArtists';
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    id: {
-        type: String, 
-        unique: true
-    },
     username: {
         type: String,
         required:  [true, 'Please add a name'], 
@@ -18,7 +16,7 @@ password: {
     unique: false,
     maxlength: [100, 'Password cannot be more than 100 characters']
 },
-     name: {
+     firstname: {
         type: String, 
         required: true, 
         maxlength: [20]
@@ -32,4 +30,4 @@ lastname: {
 
 )
 
-module.exports = mongoose.models.userSchema || mongoose.model('User', userSchema);
+export default mongoose.models.userSchema || mongoose.model('User', userSchema);

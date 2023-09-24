@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 
-import savedArtists from './savedArtists'
-
 const artistSchema = new mongoose.Schema({
-id: {
-    type: String, 
-    unique: true
-},
+
     username: {
         type: String,
         required:  [true, 'Please add a name'], 
@@ -20,7 +15,7 @@ password: {
     unique: false,
     maxlength: [100, 'Password cannot be more than 100 characters']
 },
-     name: {
+     firstname: {
         type: String, 
         required: true, 
         maxlength: [20]
@@ -29,8 +24,7 @@ lastname: {
     type: String, 
     required: true, 
     maxlength: [20]
-}, 
-savedArtists : {savedArtists}
+}
 }
 
 )
