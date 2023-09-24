@@ -1,4 +1,5 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {}
-
-module.exports = nextConfig
+module.exports = 
+{
+    env: {
+    MONGO_URI : process.env.MONGO_URI
+}}
