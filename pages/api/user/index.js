@@ -1,5 +1,5 @@
 import dbConnect from '../../../utils/dbConnect'
-import userSchema from '../../../models/user'
+import userSchema from '../../../models/User'
 
 dbConnect()
 

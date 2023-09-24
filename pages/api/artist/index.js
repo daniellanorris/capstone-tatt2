@@ -1,5 +1,5 @@
 import dbConnect from '../../../utils/dbConnect'
-import artistSchema from '../../../models/user'
+import Artist from '../../../models/Artist'
 
 dbConnect()
 
@@ -10,7 +10,7 @@ export default async (req, res) => {
 
         case 'GET':
             try {
-                const artists = await artistSchema.find({});
+                const artists = await Artist.find({});
                 res.status(200).json({success: true, data: artists})
             }
             catch(error) {
@@ -19,7 +19,7 @@ export default async (req, res) => {
             break;
     case 'POST':
         try {
-            const artist = await artistSchema.create(req.body);
+            const artist = await Artist.create(req.body);
 
             res.status(201).json({success: true, data: artist})
         }

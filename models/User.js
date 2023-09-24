@@ -1,8 +1,6 @@
-import savedArtists from './savedArtists';
+import mongoose from 'mongoose';
 
-const mongoose = require('mongoose');
-
-const userSchema = new mongoose.Schema({
+const user = new mongoose.Schema({
     username: {
         type: String,
         required:  [true, 'Please add a name'], 
@@ -30,4 +28,6 @@ lastname: {
 
 )
 
-export default mongoose.models.userSchema || mongoose.model('User', userSchema);
+const userSchema = mongoose.model('user', user);
+
+export default userSchema;

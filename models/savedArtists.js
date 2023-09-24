@@ -1,16 +1,15 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-import { Schema } from 'mongoose'
-
-import artistSchema from './artistSchema'
-
-const savedArtists = new Schema({
-    _id: artistSchema._id,
-    firstname, 
-    about
+const saved = new mongoose.Schema({
+artist: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Artist',
+}
 
   })
 
-export default mongoose.models.savedArtists || mongoose.model('Saved Artists', savedArtists);
+const savedArtists = mongoose.model('saved', saved);
+
+export default savedArtists;
 
 
