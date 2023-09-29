@@ -1,4 +1,4 @@
-import dbConnect from '../../../utils/dbConnect'
+import dbConnect from '../../../config/db/utils/dbConnect'
 import Artist from '../../../models/Artist'
 
 dbConnect()
@@ -26,25 +26,6 @@ export default async (req, res) => {
             }
             break;
 
-        case 'POST':
-
-        try {
-            const artist = await Artist.create(id, req.body, {
-                new: true, 
-                runValidators: true
-  
-            })
-
-            if(!artist) {
-                return res.status(400).json({success: false})
-            }
-
-            res.status(200).json({success: true})
-        }
-
-        catch(error) {
-            res.status(400).json({success: false})
-        }
         case 'PUT':
             try {
                 const artist = await Artist.findByIdAndUpdate(id, req.body, {
@@ -68,7 +49,8 @@ export default async (req, res) => {
         case 'DELETE': 
         
         try {
-            const deletedArtist = await Artist.deleteOne({_id: id})
+            const id = req.query.artistId
+            const deletedArtist = await Artist.deleteOne({ _id: id })
 
             if(!deletedArtist) {
                 return res.status(400).json({success: false})

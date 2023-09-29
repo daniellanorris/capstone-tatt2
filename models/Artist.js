@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const artistSchema = new mongoose.Schema({
+const Artist = new mongoose.Schema({
 
     username: {
         type: String,
@@ -29,6 +29,4 @@ lastname: {
 
 )
 
-const Artist = mongoose.model('artistSchema', artistSchema);
-
-export default Artist;
+module.exports = mongoose.models.Artist || mongoose.model('Artist', Artist);

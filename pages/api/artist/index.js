@@ -1,4 +1,4 @@
-import dbConnect from '../../../utils/dbConnect'
+import dbConnect from '../../../config/db/utils/dbConnect'
 import Artist from '../../../models/Artist'
 
 dbConnect()
@@ -17,18 +17,27 @@ export default async (req, res) => {
                 res.status(400).json({success: false})
             }
             break;
+
     case 'POST':
         try {
-            const artist = await Artist.create(req.body);
 
-            res.status(201).json({success: true, data: artist})
-        }
-        catch(error) {
-            res.status(400).json({success: false})
-        }
+            const existingArtist = await Artist.findOne({ username: req.body.username });
 
-        break;
+            if (existingArtist) {
+              return res.status(400).json({ success: false, message: 'Username already exists' });
+            }
 
+            const newArtist = await Artist.create(req.body);
+        
+            if (!newArtist) {
+              return res.status(400).json({ success: false, message: 'User creation failed' });
+            }
+        
+            res.status(201).json({ success: true, data: newArtist });
+          } catch (error) {
+            res.status(500).json({ success: false, error: error.message });
+          }
+          break;
 
     }
 
