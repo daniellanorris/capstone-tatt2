@@ -45,7 +45,8 @@ export default async (req, res) => {
 
         case 'PUT':
             try {
-                const user = await User.findByIdAndUpdate(id, req.body, {
+                const userId = req.query.userId
+                const user = await User.findByIdAndUpdate(userId, req.body, {
                     new: true,
                     runValidators: true
 

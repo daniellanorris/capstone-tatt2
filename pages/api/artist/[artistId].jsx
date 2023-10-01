@@ -13,7 +13,8 @@ export default async (req, res) => {
         case 'GET': 
 
             try {
-                const artist = await Artist.findById(id);
+                const artistId = req.query.artistId
+                const artist = await Artist.findById(artistId);
 
                 if(!artist) {
                     return res.status(400).json({success: false})
@@ -28,24 +29,22 @@ export default async (req, res) => {
 
         case 'PUT':
             try {
-                const artist = await Artist.findByIdAndUpdate(id, req.body, {
-                    new: true, 
-                    runValidators: true
-      
-                })
-    
-                if(!artist) {
-                    return res.status(400).json({success: false})
+                const artistId = req.query.artistId; 
+                const artist = await Artist.findByIdAndUpdate(artistId, req.body, {
+                  new: true, 
+                  runValidators: true,
+                });
+            
+                if (!artist) {
+                  return res.status(404).json({ success: false, message: 'Artist not found' });
                 }
-    
-                res.status(200).json({success: true})
-            }
-    
-            catch(error) {
-                res.status(400).json({success: false})
-            }
-        break;
-
+            
+                res.status(200).json({ success: true, data: artist });
+              } catch (error) {
+                res.status(500).json({ success: false, error: error.message });
+              }
+              break;
+            
         case 'DELETE': 
         
         try {
