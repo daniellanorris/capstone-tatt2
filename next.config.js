@@ -1,5 +1,8 @@
-module.exports = 
-{
-    env: {
-    MONGO_URI : process.env.MONGO_URI
-}}
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    reactStrictMode: true,
+    swcMinify: true,
+  }
+  
+  module.exports = nextConfig
+  

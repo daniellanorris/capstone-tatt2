@@ -1,6 +1,7 @@
 import dbConnect from '../../../../config/db/utils/dbConnect';
 import User from '../../../../models/User';
 import Artist from '../../../../models/Artist';
+import { deleteSavedArtist } from '../../../../config/db/controllers/savedArtistController';
 
 dbConnect();
 
@@ -19,8 +20,7 @@ export default async (req, res) => {
         if (!user || !artistId) {
           return res.status(404).json({ success: false, message: 'User or artist not found' });
         }
-
-        // Create a savedArtist entry for the user
+``
         user.savedArtists.push(artist._id);
         await user.save();
 
@@ -60,23 +60,19 @@ export default async (req, res) => {
       }
       break;
 
-    case 'DELETE':
-      try {
-        const { savedArtistId } = body;
-        const result = await deleteSavedArtist(savedArtistId);
-
-        if (result.success) {
-          res.status(200).json({ success: true, message: result.message });
-        } else {
-          res.status(404).json({ success: false, message: result.message });
+      case 'DELETE':
+        try {
+          const { artistId } = req.body;
+          const result = await deleteSavedArtist(userId, artistId); 
+      
+          if (result.success) {
+            res.status(200).json({ success: true, message: result.message });
+          } else {
+            res.status(404).json({ success: false, message: result.message });
+          }
+        } catch (error) {
+          res.status(500).json({ success: false, error: error.message });
         }
-      } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-      }
-      break;
-
-    default:
-      res.status(400).json({ success: false, message: 'Invalid method' });
-      break;
+        break;
   }
 };

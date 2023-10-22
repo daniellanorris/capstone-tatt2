@@ -1,19 +1,36 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
-async function dbConnect() {
-  if (mongoose.connection.readyState >= 1) {
-    return;
+const MONGODB_URI = process.env.MONGODB_URI || `mongodb://localhost:27017/${process.env.DB_NAME}`;
+
+// src: https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/lib/dbConnect.js
+
+let cached = global.mongoose
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null }
+}
+
+export default async function dbConnect() {
+  if (cached.conn) {
+    return cached.conn
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    }
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      return mongoose
+    })
   }
 
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
+    cached.conn = await cached.promise
+  } catch (e) {
+    cached.promise = null
+    throw e
   }
-}
 
-export default dbConnect;
+  return cached.conn
+}

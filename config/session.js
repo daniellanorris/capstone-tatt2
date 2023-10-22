@@ -1,7 +1,10 @@
-export default {
-    cookieName: "tatt2_auth_cookie",
-    password: process.env.IRON_PASS,
-    cookieOptions: {
-      secure: process.env.NODE_ENV === "production",
-    },
+const sessionOptions = {
+  cookieName: "myapp_cookiename",
+  password: "complex_password_at_least_32_characters_long",
+  cookieOptions: {
+    maxAge: undefined,
+    secure: process.env.NODE_ENV === "production",
   }
+};
+
+export default sessionOptions

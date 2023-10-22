@@ -37,12 +37,10 @@ export default async (req, res) => {
                         return res.status(404).json({ success: false, message: 'Artist not found' });
                     }
             
-                    // Create a new tattoo style
                     const newTattooStyle = new TattooStyle({ name });
             
                     await newTattooStyle.save();
             
-                    // Push the new tattoo style's name into the artist's TattooStyle array
                     artist.TattooStyle.push(newTattooStyle.name);
             
                     await artist.save();

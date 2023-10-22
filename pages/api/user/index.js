@@ -1,5 +1,6 @@
 import dbConnect from '../../../config/db/utils/dbConnect'
 import User from '../../../models/User'
+import cookie from 'cookie'
 
 dbConnect()
 
@@ -43,6 +44,15 @@ export default async (req, res) => {
                 }
             
                 res.status(201).json({ success: true, data: newUser });
+
+                res.setHeader("Set-Cookie", cookie.serialize("tokenUser", req.body.token, {
+                    httpOnly: true, 
+                    secure: "development", 
+                    maxAge: 60 * 60, 
+                    sameSite: "strict",
+                    path: "/"
+      
+                  }))
               } catch (error) {
                 res.status(500).json({ success: false, error: error.message });
               }

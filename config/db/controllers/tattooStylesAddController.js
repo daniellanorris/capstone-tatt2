@@ -1,5 +1,6 @@
 
 import Artist from '../../../models/Artist';
+import User from '../../../models/User'
 
 
 // Function to save an artist to a user's savedArtists
@@ -24,3 +25,5 @@ const {name} = req.body
     return { success: false, error: error.message };
   }
 }
+
+
