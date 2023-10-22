@@ -3,8 +3,7 @@ import Footer from '../components/footer';
 import Header from '../components/header';
 import 'bootstrap/dist/css/bootstrap.css';
 import React from 'react';
-import '../public/styles/global.css'
-
+import '../public/styles/global.css';
 
 function MyApp({ Component, pageProps }) {
   return (

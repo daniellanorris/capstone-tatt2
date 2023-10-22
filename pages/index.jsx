@@ -3,13 +3,13 @@ import Link from 'next/link';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
 
-export default function Home(props) {
+
+export default function Home() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const [userId, setUserId] = useState(null);
-    const { userDataSet, setUserData } = useUserData();
+    const { userId, setUserId } = useUserData();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,17 +34,14 @@ export default function Home(props) {
                 setData(userData);
 
                 // Handle user data
-                const token = cookie.get("token");
+                const token = cookie.get('token');
                 if (token) {
                     const { username, userId } = JSON.parse(token);
                     setUsername(username);
                     setUserId(userId);
-                    setUserData({userId: userId})
-                    console.log(userDataSet)
-
+                    console.log('new user Id' + userId) // this provides the ID, this is good
                 }
 
-                // Store artist data
                 setData(artistData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -55,7 +52,7 @@ export default function Home(props) {
         fetchData();
     }, []);
 
-    async function saveArtist(userId, artistId) {
+    async function saveArtist(artistId, userId) {
         console.log('userId: ' + userId);
         console.log('artistId: ' + artistId);
         try {
@@ -70,7 +67,6 @@ export default function Home(props) {
             if (res.status === 201) {
                 console.log('Artist saved successfully');
                 setMessage('Artist saved successfully');
-
             } else {
                 console.error('Failed to save artist');
                 setMessage('Failed to save artist');
@@ -85,6 +81,7 @@ export default function Home(props) {
         <>
             <div>Home</div>
             <div>{username}</div>
+            <div> {userId} </div>
             {data && data.data && (
                 <div className="card">
                     Artists:
@@ -100,8 +97,8 @@ export default function Home(props) {
                                         <p>Last Name: {item.lastname}</p>
                                         <p>Body: {item.body}</p>
                                     </Link>
-                                    {/* Pass both userId and item._id to saveArtist */}
-                                    <button onClick={() => saveArtist(userId, item._id)}>Save Artist</button>
+                                    {/* Pass item._id to saveArtist */}
+                                    <button onClick={() => saveArtist(item._id, userId)}>Save Artist</button>
                                 </div>
                             ))}
                         </ul>
