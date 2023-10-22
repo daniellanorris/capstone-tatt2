@@ -4,7 +4,7 @@ import { useUserData } from '../../context/userContext';
 export default function UserProfile() {
     const { userId } = useUserData();
     const userId2 = userId;
-    console.log(userId);
+    console.log('userId' + userId);
     const [newArtist, setNewArtist] = useState([]);
 
     useEffect(() => {
@@ -14,6 +14,7 @@ export default function UserProfile() {
                 if (savedArtistsResponse.ok) {
                     const artistData = await savedArtistsResponse.json();
                     setNewArtist(artistData);
+                    console.log(artistData)
                 } else {
                     console.log('Failed to fetch saved artists');
                 }
@@ -27,15 +28,15 @@ export default function UserProfile() {
 
     return (
         <>
-            <div>User Profile</div>
+            <h1>User Profile</h1>
             <div>User ID: {userId}</div>
-            <div>
+            <div class="card">
                 <h2>Saved Artists</h2>
                 <ul>
-                    {Array.isArray(newArtist) ? (
-                        newArtist.map((artistId, index) => (
-                            <li key={index}>
-                                <div> {artistId} </div>
+                    {Array.isArray(newArtist.data) ? (
+                        newArtist.data.map((artist) => (
+                            <li key={artist._id}>
+                                <div> {artist.username} </div>
                             </li>
                         ))
                     ) : (
@@ -44,6 +45,8 @@ export default function UserProfile() {
                         </li>
                     )}
                 </ul>
+            </div>
+            <div class="card"> 
             </div>
         </>
     );

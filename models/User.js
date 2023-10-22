@@ -41,7 +41,20 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist', 
         required: false
-    }]
+    }], 
+    location: [
+        {
+            latitude: {
+                type: Number, 
+                required: true,
+
+            }, 
+            longitude: {
+                type: Number, 
+                required: true
+            }
+        }
+    ]
 });
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);

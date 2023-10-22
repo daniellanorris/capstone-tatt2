@@ -2,7 +2,6 @@ import User from '../../../models/User';
 import Artist from '../../../models/Artist';
 
 
-// Function to save an artist to a user's savedArtists
 export default async function saveArtistToUser() {
 const userId = User._id
 const artistId = Artist._id
@@ -15,7 +14,6 @@ const artistId = Artist._id
       return { success: false, message: 'User or artist not found' };
     }
 
-    // Assuming you want to add the artist to the user's savedArtists
     user.savedArtists.push(artist._id);
     await user.save();
 

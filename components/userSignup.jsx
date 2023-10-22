@@ -1,14 +1,19 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import cookie from 'js-cookie';
+import { useUserData } from '../context/userContext';  // Assuming you're using context correctly
 
-export default function SignupArtists() {
+export default function SignupUsers() {
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [message, setMessage] = useState('');
+    const { isUser, setIsUser } = useUserData();
+    const { isArtist, setIsArtist } = useUserData();
+    setIsUser(true); 
+    setIsArtist(false)
 
     async function handleValidation() {
         if (username && password && firstname && lastname) {
@@ -27,8 +32,8 @@ export default function SignupArtists() {
 
             if (response.status === 201) {
                 const data = await response.json();
-                const userId = data.data._id
-                cookie.set("token", JSON.stringify({ username, userId }), { expires: 1 / 24 });
+                const userId = data.data._id;
+                cookie.set("token", JSON.stringify({ username, userId, isUser: true, isArtist: false }), { expires: 1 / 24 });
 
                 setMessage('Signup successful');
                 router.push('/');

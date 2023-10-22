@@ -23,7 +23,7 @@ export default function Signup() {
                     <div className="container">
                         <div className="row">
                             <div>
-                                {user ? <SignupUsers /> : artist ? <SignupArtists updateArtistData={updateArtistData} /> : null}
+                                {user ? <SignupUsers role="user"/> : artist ? <SignupArtists role="artist" updateArtistData={updateArtistData} /> : null}
                             </div>
                         </div>
                     </div>

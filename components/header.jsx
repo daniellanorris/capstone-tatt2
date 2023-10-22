@@ -2,7 +2,9 @@
 import { useUserData } from '../context/userContext';
 
 export default function Header() {
-    const {userId} = useUserData()
+    const { userId } = useUserData()
+    const { isArtist } = useUserData();
+    const { isUser } = useUserData();
     console.log(userId)
 
     return (
@@ -17,7 +19,9 @@ export default function Header() {
                         <li><a href="/about">About</a></li>
                         <li><a href="/services">Services</a></li>
                         <li><a href="/contact">Contact</a></li>
-                        <li><a href={`/user/${userId}`}>User Profile</a></li>   
+                        {isUser === true ? (<li><a href={`/user/${userId}`}>User Profile</a></li>) : (
+                            null)
+                        }
                     </ul>
                 </nav>
             </header>

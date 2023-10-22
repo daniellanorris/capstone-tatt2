@@ -10,6 +10,12 @@ export default function Home() {
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
     const { userId, setUserId } = useUserData();
+    const {isUser} = useUserData()
+    const {isArtist} = useUserData()
+
+    console.log('isUser' + isUser)
+    console.log('isArtist' + isArtist)
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -97,8 +103,8 @@ export default function Home() {
                                         <p>Last Name: {item.lastname}</p>
                                         <p>Body: {item.body}</p>
                                     </Link>
-                                    {/* Pass item._id to saveArtist */}
-                                    <button onClick={() => saveArtist(item._id, userId)}>Save Artist</button>
+                                   <button onClick={() => saveArtist(item._id, userId)}>Save Artist</button>
+                                
                                 </div>
                             ))}
                         </ul>
