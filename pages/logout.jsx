@@ -1,1 +1,0 @@
-//use cookie.remove("token") to end session
