@@ -7,12 +7,14 @@ export const UserContextProvider = ({ children }) => {
   const [userId, setUserId] = useState(null); // Initialize userId with null
   const [isArtist, setIsArtist] = useState(null);
   const [isUser, setIsUser] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(null)
 
   useEffect(() => {
     const token = cookie.get('token');
     if (token) {
-      const { userId, isUser, isArtist} = JSON.parse(token);
+      const { userId, isUser, isArtist, isLoggedIn} = JSON.parse(token);
       setUserId(userId);
+      setIsLoggedIn(isLoggedIn)
       if(isArtist === true) {
         setIsArtist(true)
       }
@@ -23,7 +25,7 @@ export const UserContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userId, setUserId, isArtist, setIsArtist, isUser, setIsUser }}>
+    <UserContext.Provider value={{ userId, setUserId, isArtist, setIsArtist, isUser, setIsUser, setIsLoggedIn, isLoggedIn }}>
       {children}
     </UserContext.Provider>
   );

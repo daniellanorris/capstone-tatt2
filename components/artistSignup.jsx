@@ -14,15 +14,13 @@ export default function SignupArtists() {
   const [location, setLocation] = useState('');
   const [manuallyEnter, setManuallyEnter] = useState(false);
   const { isArtist, setIsArtist } = useUserData();
-  const { isUser, setIsUser } = useUserData();
+  const { setIsUser } = useUserData();
+  const {isLoggedIn, setIsLoggedIn} = useUserData()
 
   const { geolocationData, error } = GeoLocationData();
 
-  setIsArtist(true)
-  setIsUser(false)
-
   useEffect(() => {
-    // Set the location to the automatically retrieved geolocation data when it's available.
+    setManuallyEnter(false);
     if (geolocationData && geolocationData.address) {
       setLocation(`${geolocationData.address.latitude}, ${geolocationData.address.longitude}`);
     }
@@ -47,10 +45,12 @@ export default function SignupArtists() {
 
       if (response.status === 201) {
         setMessage('Signup successful');
-        cookie.set('token', JSON.stringify({ username, isArtist: true, isUser: false }), { expires: 1 / 24 });
+        cookie.set('token', JSON.stringify({ username, isArtist: true, isUser: false, isLoggedIn: true }), { expires: 1 / 24 });
         setIsArtist(true); 
+        setIsUser(false)
+        setIsLoggedIn(true)
         router.push('/');
-        console.log(response)
+        console.log(response);
       } else if (response.status === 400) {
         const data = await response.json();
         setMessage(data.message);

@@ -10,8 +10,10 @@ export default function SignupUsers() {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [message, setMessage] = useState('');
-    const { isUser, setIsUser } = useUserData();
-    const { isArtist, setIsArtist } = useUserData();
+    const { setIsUser } = useUserData();
+    const { setIsArtist } = useUserData();
+    const {isLoggedIn, setIsLoggedIn} = useUserData()
+    
     setIsUser(true); 
     setIsArtist(false)
 
@@ -33,9 +35,10 @@ export default function SignupUsers() {
             if (response.status === 201) {
                 const data = await response.json();
                 const userId = data.data._id;
-                cookie.set("token", JSON.stringify({ username, userId, isUser: true, isArtist: false }), { expires: 1 / 24 });
+                cookie.set("token", JSON.stringify({ username, userId, isUser: true, isArtist: false, isLoggedIn: true }), { expires: 1 / 24 });
 
                 setMessage('Signup successful');
+                setIsLoggedIn(true)
                 router.push('/');
             } else if (response.status === 400) {
                 const data = await response.json();

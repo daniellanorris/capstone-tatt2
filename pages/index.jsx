@@ -2,20 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
-
+import GeoLocationData from '../components/geolocationData';
 
 export default function Home() {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const { userId, setUserId } = useUserData();
-    const {isUser} = useUserData()
-    const {isArtist} = useUserData()
-
-    console.log('isUser' + isUser)
-    console.log('isArtist' + isArtist)
-
+    const { userId, setUserId, isUser, isArtist } = useUserData();
+    const { geolocationData } = GeoLocationData();
+    const {isLoggedIn} = useUserData()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,7 +41,7 @@ export default function Home() {
                     const { username, userId } = JSON.parse(token);
                     setUsername(username);
                     setUserId(userId);
-                    console.log('new user Id' + userId) // this provides the ID, this is good
+                    console.log('new user Id' + userId); // this provides the ID, this is good
                 }
 
                 setData(artistData);
@@ -56,7 +52,7 @@ export default function Home() {
         };
 
         fetchData();
-    }, []);
+    }, [setUserId]);
 
     async function saveArtist(artistId, userId) {
         console.log('userId: ' + userId);
@@ -85,33 +81,43 @@ export default function Home() {
 
     return (
         <>
-            <div>Home</div>
-            <div>{username}</div>
-            <div> {userId} </div>
-            {data && data.data && (
-                <div className="card">
-                    Artists:
-                    {error ? (
-                        <p>Error fetching artists: {error}</p>
-                    ) : (
-                        <ul>
-                            {data.data.map((item, index) => (
-                                <div key={index} className="card m-5">
-                                    <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
-                                        <p>Username: {item.username}</p>
-                                        <p>First Name: {item.firstname}</p>
-                                        <p>Last Name: {item.lastname}</p>
-                                        <p>Body: {item.body}</p>
-                                    </Link>
-                                   <button onClick={() => saveArtist(item._id, userId)}>Save Artist</button>
-                                
-                                </div>
-                            ))}
-                        </ul>
+            {isLoggedIn ? (
+                <>
+                    <h1>Home</h1>
+                    <h2>Welcome, {username}</h2>
+                    <div> {userId} </div>
+                    <div> Hey friend! It looks like you are in {geolocationData?.address?.city}, {geolocationData?.address?.state} at area code {geolocationData?.address?.postalCode}. Here's a list of artists that are near you!</div>
+                    {data && data.data && (
+                        <div className="card">
+                            Artists:
+                            {error ? (
+                                <p>Error fetching artists: {error}</p>
+                            ) : (
+                                <ul>
+                                    {data.data.map((item, index) => (
+                                        <div key={index} className="card m-5">
+                                            <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
+                                                <p>Username: {item.username}</p>
+                                                <p>First Name: {item.firstname}</p>
+                                                <p>Last Name: {item.lastname}</p>
+                                                <p>Body: </p>
+                                            </Link>
+                                            <button onClick={() => saveArtist(item._id, userId)}>Save Artist</button>
+                                        </div>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
                     )}
+                    {message && <p>{message}</p>
+                    }
+                </>
+            ) : (
+                <div>
+                    <p>You are not logged in. Please log in.</p>
+                    <Link href="/signup"> Login </Link>
                 </div>
             )}
-            {message && <p>{message}</p>}
         </>
     );
 }
