@@ -17,14 +17,14 @@ export default function SignupArtists() {
   const { setIsUser } = useUserData();
   const {isLoggedIn, setIsLoggedIn} = useUserData()
 
-  const { geolocationData, error } = GeoLocationData();
+  const { geolocationData, error, loading } = GeoLocationData();
 
   useEffect(() => {
     setManuallyEnter(false);
-    if (geolocationData && geolocationData.address) {
+    if (!loading && geolocationData && geolocationData.address) {
       setLocation(`${geolocationData.address.latitude}, ${geolocationData.address.longitude}`);
     }
-  }, [geolocationData]);
+  }, [geolocationData, loading]);
 
   async function handleValidation() {
     if (username && password && firstname && lastname && location) {

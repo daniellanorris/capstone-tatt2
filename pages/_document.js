@@ -20,7 +20,7 @@ class MyDocument extends Document {
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossOrigin="anonymous"
           />
-          <script src="https://js.radar.com/v4.1.11/radar.min.js"></script>
+          <script src="https://js.radar.com/v3/radar.min.js"></script>
         </Head>
         <body>
           <Main />

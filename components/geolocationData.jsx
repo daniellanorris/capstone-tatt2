@@ -1,32 +1,31 @@
-import { useEffect, useState } from 'react';
-import { config } from 'dotenv';
-
-config(); 
-import process from 'process'; 
-
+// GeoLocationData.jsx
+import React, { useEffect, useState } from 'react';
+import Radar from 'radar-sdk-js';
 
 export default function GeoLocationData() {
   const [geolocationData, setGeolocationData] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // Add a loading state
+  const apiKey = 'prj_live_pk_aceff18739558b092e59a9c9f68ac28f06394682';
 
   useEffect(() => {
-    Radar.initialize(process.env.GEO_API_KEY);
+    Radar.initialize(apiKey);
 
     Radar.ipGeocode((err, result) => {
       if (err) {
         console.error('Error:', err);
         setError('There was an issue getting the geolocation data.');
+        setLoading(false); // Set loading to false
         return;
       }
 
       if (result && result) {
-        console.log(result);
+        console.log('result' + result);
         setGeolocationData(result);
+        setLoading(false); 
       }
     });
   }, []);
 
-  return { geolocationData, error };
+  return { geolocationData, error, loading };
 }
-
-
