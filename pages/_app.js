@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import React from 'react';
 import '../public/styles/global.css';
 
+
+
 function MyApp({ Component, pageProps }) {
   return (
     <UserContextProvider>

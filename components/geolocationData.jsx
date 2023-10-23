@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Radar from 'radar-sdk-js';
+import 'radar-sdk-js/dist/radar.css';
 
 export default function GeoLocationData() {
   const [geolocationData, setGeolocationData] = useState(null);
