@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Radar from 'radar-sdk-js';
-import 'radar-sdk-js/dist/radar.css';
+import { useEffect, useState } from 'react';
+import { config } from 'dotenv';
+
+config(); 
+import process from 'process'; 
+
 
 export default function GeoLocationData() {
   const [geolocationData, setGeolocationData] = useState(null);
@@ -26,4 +29,4 @@ export default function GeoLocationData() {
   return { geolocationData, error };
 }
 
-//need to figure this out
+
