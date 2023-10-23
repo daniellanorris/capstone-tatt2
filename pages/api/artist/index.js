@@ -36,7 +36,7 @@ export default async (req, res) => {
 
             res.setHeader("Set-Cookie", cookie.serialize("tokenArtist", req.body.token, {
               httpOnly: true, 
-              secure: "production", 
+              secure: "development", 
               maxAge: 60 * 60, 
               sameSite: "strict",
               path: "/"
