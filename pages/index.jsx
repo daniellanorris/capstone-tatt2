@@ -9,9 +9,9 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const { userId, setUserId, isUser, isArtist } = useUserData();
+    const { userId, setUserId, isLoggedIn, isUser } = useUserData();
     const { geolocationData } = GeoLocationData();
-    const {isLoggedIn} = useUserData()
+    const { savedArtists, setSavedArtists } = useUserData();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,61 +21,91 @@ export default function Home() {
                 if (!userResponse.ok) {
                     throw new Error(`Failed to fetch user data. Status: ${userResponse.status}`);
                 }
-
                 // Fetch artist data
                 const artistResponse = await fetch('/api/artist');
                 if (!artistResponse.ok) {
                     throw new Error(`Failed to fetch artist data. Status: ${artistResponse.status}`);
                 }
-
                 // Parse responses
                 const userData = await userResponse.json();
                 const artistData = await artistResponse.json();
-
                 // Store user data
                 setData(userData);
-
                 // Handle user data
                 const token = cookie.get('token');
                 if (token) {
                     const { username, userId } = JSON.parse(token);
                     setUsername(username);
                     setUserId(userId);
-                    console.log('new user Id' + userId); // this provides the ID, this is good
                 }
-
                 setData(artistData);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError(error.message);
             }
         };
-
         fetchData();
     }, [setUserId]);
 
-    async function saveArtist(artistId, userId) {
-        console.log('userId: ' + userId);
-        console.log('artistId: ' + artistId);
-        try {
-            const res = await fetch(`/api/user/${userId}/savedArtists`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ artistId }),
-            });
+    function hasSavedArtist(artistId) {
+        return savedArtists && savedArtists[artistId];
+    }
 
-            if (res.status === 201) {
-                console.log('Artist saved successfully');
-                setMessage('Artist saved successfully');
-            } else {
-                console.error('Failed to save artist');
-                setMessage('Failed to save artist');
+    async function saveArtist(artistId) {
+        if (savedArtists && hasSavedArtist(artistId)) {
+            setMessage('Artist is already saved');
+        } else {
+            try {
+                const res = await fetch(`/api/user/${userId}/savedArtists`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ artistId }),
+                });
+
+                if (res.status === 201) {
+                    setSavedArtists({
+                        ...savedArtists,
+                        [artistId]: true,
+                    });
+                    setMessage('Artist added successfully');
+                } else {
+                    console.error('Failed to save artist');
+                    setMessage('Failed to save artist');
+                }
+            } catch (error) {
+                console.error('Error saving artist:', error);
+                setMessage('Error saving artist');
             }
-        } catch (error) {
-            console.error('Error saving artist:', error);
-            setMessage('Error saving artist');
+        }
+    }
+
+    async function removeArtist(artistId) {
+        if (savedArtists && hasSavedArtist(artistId)) {
+            try {
+                const res = await fetch(`/api/user/${userId}/savedArtists`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ artistId }),
+                });
+
+                if (res.status === 200) {
+                    const { [artistId]: removed, ...newSavedArtists } = savedArtists;
+                    setSavedArtists(newSavedArtists);
+                    setMessage('Artist removed successfully');
+                } else {
+                    console.error('Failed to remove artist');
+                    setMessage('Failed to remove artist');
+                }
+            } catch (error) {
+                console.error('Error removing artist:', error);
+                setMessage('Error removing artist');
+            }
+        } else {
+            setMessage('Artist is not saved');
         }
     }
 
@@ -85,11 +115,9 @@ export default function Home() {
                 <>
                     <h1>Home</h1>
                     <h2>Welcome, {username}</h2>
-                    <div> {userId} </div>
                     <div> Hey friend! It looks like you are in {geolocationData?.address?.city}, {geolocationData?.address?.state} at area code {geolocationData?.address?.postalCode}. Here's a list of artists that are near you!</div>
                     {data && data.data && (
-                        <div className="card">
-                            Artists:
+                        <div> <h3>Click on each card to access artist profile pages! </h3> 
                             {error ? (
                                 <p>Error fetching artists: {error}</p>
                             ) : (
@@ -100,17 +128,22 @@ export default function Home() {
                                                 <p>Username: {item.username}</p>
                                                 <p>First Name: {item.firstname}</p>
                                                 <p>Last Name: {item.lastname}</p>
-                                                <p>Body: </p>
+                                                <p>Location: {} </p>
                                             </Link>
-                                            <button onClick={() => saveArtist(item._id, userId)}>Save Artist</button>
+                                            {isUser ? (
+                                        hasSavedArtist(item._id) ? (
+                                            <button onClick={() => removeArtist(item._id)}>Unsave Artist</button>
+                                        ) : (
+                                            <button onClick={() => saveArtist(item._id)}>Save Artist</button>
+                                        )
+                                    ) : null}
                                         </div>
                                     ))}
                                 </ul>
                             )}
                         </div>
                     )}
-                    {message && <p>{message}</p>
-                    }
+                    {message && <p>{message}</p>}
                 </>
             ) : (
                 <div>

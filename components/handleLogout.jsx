@@ -5,7 +5,6 @@ import { useUserData } from '../context/userContext';
 
 export default function Logout() {
   const router = useRouter();
-  const {username} = useUserData()
 
   const handleLogout = () => {
     cookie.remove('token');
@@ -15,8 +14,8 @@ export default function Logout() {
 
   return (
       <>
-    <div>
-      <button onClick={handleLogout}>Logout : {username} </button>
+    <div style={{ marginLeft: '10px' }}> 
+      <button onClick={handleLogout}>Logout </button>
     </div>
     </>
   );

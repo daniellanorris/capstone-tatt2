@@ -4,7 +4,7 @@ a {
 
 html, body {
     height: 100%;
-    margin: 0;
+    margin: 10px;
   }
 
   #root {
@@ -15,7 +15,7 @@ html, body {
   
 
   .footer {
-    margin-top: 500px;
+    margin-top: 100px;
     padding: 20px;
     text-align: center;
   }
@@ -24,4 +24,14 @@ html, body {
       border: white solid 2px;
       padding: 20px
 
+  }
+
+  button {
+    background-color: blueviolet;
+    border: solid 2px white;
+    border-radius: 10px;
+  }
+
+  a {
+    text-decoration: none;
   }

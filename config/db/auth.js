@@ -1,6 +1,6 @@
 import { compare } from 'bcrypt'
-import User from './models/user'
-import dbConnect from './connection'
+import User from '../../models/User'
+import dbConnect from '../db/utils/dbConnect'
 
 export async function loginArtist(username, password) {
     if (!(username && password))
@@ -21,7 +21,7 @@ export async function loginArtist(username, password) {
 }
 
 
-export async function login(username, password) {
+export async function loginUser(username, password) {
     if (!(username && password))
         throw new Error('Must include username and password')
 

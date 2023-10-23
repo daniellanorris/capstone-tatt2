@@ -1,7 +1,8 @@
 
 import { useUserData } from '../context/userContext';
 import Logout from './handleLogout'
-import React, {Image} from 'react'
+import React from 'react'
+import Image from 'next/image'
 
 export default function Header() {
     const { userId } = useUserData()
@@ -12,21 +13,22 @@ export default function Header() {
 
     return (
         <>
-            <header expand="lg" data-bs-theme="dark" bg="dark">
-                <nav>
+            <header expand="lg" class="p-3 bg-dark text-white">
+                <div class="container">
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                     <div class="logo">
-                        <a href="/">
-                            <Image src="public/logo.png" width="100px" height="auto"/>
+                        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                            <Image src="/logo.png" width={100} height={100}/>
                         </a>
                     </div>
                     {isLoggedIn === true ? (
                     <div>
-                    <ul class="nav-links">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/about">About</a></li>
-                        <li><a href="/services">Services</a></li>
-                        <li><a href="/contact">Contact</a></li>
-                        {isUser === true ? (<li><a href={`/user/${userId}`}>User Profile</a></li>) : (
+                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                        <li><a class="nav-link px-2 text-secondary" href="/">Home</a></li>
+                        <li><a class="nav-link px-2 text-secondary" href="/about">About</a></li>
+                        <li><a class="nav-link px-2 text-secondary" href="/services">Services</a></li>
+                        <li><a class="nav-link px-2 text-secondary" href="/contact">Contact</a></li>
+                        {isUser === true ? (<li><a class="nav-link px-2 text-secondary" href={`/user/${userId}`}>User Profile</a></li>) : (
                             null )
                         }
                     </ul>
@@ -41,8 +43,8 @@ export default function Header() {
                        null
 
                     )
-}
-                </nav>
+}                   </div>
+                </div>
             </header>
         </>
     );

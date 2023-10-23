@@ -30,12 +30,8 @@ export async function deleteSavedArtist(userId, artistId) {
     if (!user) {
       return { success: false, message: 'User not found' };
     }
-    const index = user.savedArtists.indexOf(artistId);
-    if (index === -1) {
-      return { success: false, message: 'Saved artist not found in user\'s list' };
-    }
 
-    user.savedArtists.splice(index, 1);
+    user.savedArtists = user.savedArtists.filter((savedArtist) => savedArtist.toString() !== artistId.toString());
 
     await user.save();
 

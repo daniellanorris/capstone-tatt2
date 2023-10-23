@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from "iron-session/next";
 import sessionOptions from "../../../config/session"
 import dbConnect from '../../../config/db/utils/dbConnect'
 import { useRouter } from 'next/router';
-
+import db from '../../../config/db/auth'
 
 
 const router = useRouter()
@@ -16,8 +16,6 @@ export default withIronSessionApiRoute(
     switch (req.query.action) {
       case "loginUser":
         return loginUser(req, res)
-      case "logout":
-        return logout(req, res)
       case "signupUser":
         return signupUser(req, res)
       case "loginArtist":
@@ -49,11 +47,6 @@ export async function loginUser(req, res) {
   } catch(err) {
     res.status(400).json({error: err.message})
   }
-}
-
-export async function logout(req, res) {
-  await req.session.destroy()
-  res.status(200).end()
 }
 
 export async function signupUser(req, res) {
