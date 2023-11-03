@@ -1,6 +1,6 @@
 import dbConnect from '../../../../config/db/utils/dbConnect';
 import Artist from '../../../../models/Artist';
-import TattooStyle from '../../../../models/Artist'; // Correct the import for the tattooStyles model
+import TattooStyle from '../../../../models/Artist'; 
 
 
 

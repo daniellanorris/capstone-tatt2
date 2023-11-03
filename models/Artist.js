@@ -11,6 +11,17 @@ const tattooStylesSchema = new mongoose.Schema({
 export const TattooStyle = mongoose.models.tattooStyles || mongoose.model('tattooStyles', tattooStylesSchema);
 
 
+
+// const imageSchema = new mongoose.Schema({
+//     imageURL: {
+//         type: String,
+//         required: true
+//     }
+// });
+
+// export const Image = mongoose.models.Image || mongoose.model('image', imageSchema);
+
+
 const ArtistSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -34,12 +45,15 @@ const ArtistSchema = new mongoose.Schema({
         required: true,
         maxlength: [20],
     },
-    TattooStyle: [
+    tattooStyle: [
         {
             type: String,
             ref: 'tattooStyles'
         },
     ],
+    image:
+        [
+            String]
 });
 
 export default mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);

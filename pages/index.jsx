@@ -9,7 +9,7 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const { userId, setUserId, isLoggedIn, isUser } = useUserData();
+    const { userId, setUserId, isLoggedIn, isUser, setArtistId, artistIdNew} = useUserData();
     const { geolocationData } = GeoLocationData();
     const { savedArtists, setSavedArtists } = useUserData();
 
@@ -34,9 +34,11 @@ export default function Home() {
                 // Handle user data
                 const token = cookie.get('token');
                 if (token) {
-                    const { username, userId } = JSON.parse(token);
+                    const { username, userId, artistIdNew } = JSON.parse(token);
                     setUsername(username);
                     setUserId(userId);
+                    setArtistId(artistIdNew)
+                    console.log('artistId is' + artistIdNew)
                 }
                 setData(artistData);
             } catch (error) {
@@ -115,6 +117,7 @@ export default function Home() {
                 <>
                     <h1>Home</h1>
                     <h2>Welcome, {username}</h2>
+                    <div> Id : {artistIdNew} </div>
                     <div> Hey friend! It looks like you are in {geolocationData?.address?.city}, {geolocationData?.address?.state} at area code {geolocationData?.address?.postalCode}. Here's a list of artists that are near you!</div>
                     {data && data.data && (
                         <div> <h3>Click on each card to access artist profile pages! </h3> 

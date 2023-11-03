@@ -1,4 +1,4 @@
-import User from './models/user'
+import User from './models/User'
 import dbConnect from '../db/utils/dbConnect'
 
 export async function create(username, password) {

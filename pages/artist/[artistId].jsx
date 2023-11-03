@@ -1,13 +1,14 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import {useUserData} from '../../context/userContext'
 
-export default function ArtistPage() {
+export default function ArtistPage(req) {
   const router = useRouter();
-  const { artistId } = router.query;
+  const  {artistIdNew}  = useUserData()
   const [artistData, setArtistData] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/artist/${artistId}`)
+    fetch(`/api/artist/${artistIdNew}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Failed to fetch data. Status: ${response.status}`);
@@ -20,12 +21,12 @@ export default function ArtistPage() {
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
-  }, [artistId]);
+  }, [artistIdNew]);
 
   return (
     <div>
       <h1>Artist Page</h1>
-      <p>Artist ID: {artistId}</p>
+      <p>Artist ID: {artistIdNew}</p>
       {artistData && (
         <div class="card">
           <h2>Artist Details</h2>

@@ -39,18 +39,20 @@ export default function SignupArtists() {
           firstname,
           lastname,
           location,
-          isArtist, 
+          isArtist
         }),
       });
 
       if (response.status === 201) {
         setMessage('Signup successful');
-        cookie.set('token', JSON.stringify({ username, isArtist: true, isUser: false, isLoggedIn: true }), { expires: 1 / 24 });
+        const data = await response.json();
+        const artistIdNew = data.data._id;
+        cookie.set('token', JSON.stringify({ username, isArtist: true, isUser: false, isLoggedIn: true, artistIdNew}), { expires: 1 / 24 });
         setIsArtist(true); 
         setIsUser(false)
         setIsLoggedIn(true)
         router.push('/');
-        console.log(response);
+        console.log('response' +{ response });
       } else if (response.status === 400) {
         const data = await response.json();
         setMessage(data.message);

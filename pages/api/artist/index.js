@@ -18,38 +18,39 @@ export default async (req, res) => {
                 res.status(400).json({success: false})
             }
             break;
-
-    case 'POST':
-        try {
-
-            const existingArtist = await Artist.findOne({ username: req.body.username });
-
-            if (existingArtist) {
-              return res.status(400).json({ success: false, message: 'Username already exists' });
-            }
-
-            const newArtist = await Artist.create(req.body);
-        
-            if (!newArtist) {
-              return res.status(400).json({ success: false, message: 'User creation failed' });
-            }
-
-            res.setHeader("Set-Cookie", cookie.serialize("tokenArtist", req.body.token, {
-              httpOnly: true, 
-              secure: process.env.NODE_ENV === "development",
-              maxAge: 60 * 60, 
-              sameSite: "strict",
-              path: "/"
-
-            }))
-        
-            res.status(201).json({ success: true, data: newArtist });
-          } catch (error) {
-            res.status(500).json({ success: false, error: error.message });
-          }
-          break;
-
-    }
+          
+            case 'POST':
+              try {
+                const existingArtist = await Artist.findOne({ username: req.body.username });
+            
+                if (existingArtist) {
+                  return res.status(400).json({ success: false, message: 'Username already exists' });
+                }
+            
+                const newArtist = await Artist.create(req.body);
+            
+                if (!newArtist) {
+                  return res.status(400).json({ success: false, message: 'User creation failed' });
+                }
+            
+                // Include the _id in the response
+                const artistId = newArtist._id;
+            
+                res.setHeader("Set-Cookie", cookie.serialize("tokenArtist", req.body.token, {
+                  httpOnly: true, 
+                  secure: process.env.NODE_ENV === "development",
+                  maxAge: 60 * 60, 
+                  sameSite: "strict",
+                  path: "/"
+                }));
+            
+                res.status(201).json({ success: true, data: { artistId, ...newArtist.toJSON() } });
+                console.log('data:' + data)
+              } catch (error) {
+                res.status(500).json({ success: false, error: error.message });
+              }
+              break;
+            }            
 
 
 }
