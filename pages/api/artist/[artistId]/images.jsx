@@ -1,15 +1,11 @@
-
 import dbConnect from '../../../../config/db/utils/dbConnect';
 import Artist from '../../../../models/Artist';
-import mongoose from 'mongoose'
-import Image from '../../../../models/Artist'
-
-
+import Image from '../../../../models/Image'
 
 dbConnect();
 
 export default async (req, res) => {
-  const { method, body, query } = req;
+  const { method} = req;
 
   switch (method) {
     case 'GET':
@@ -28,32 +24,39 @@ export default async (req, res) => {
       }
       break;
 
-      case 'POST':
-        try {
-          const artistId = req.query.artistId;
-          console.log(req.body)
-          const artist = await Artist.findById(artistId);
-      
-          if (!artist) {
-            return res.status(404).json({ success: false, message: 'User or artist not found' });
-          }
-      
-          const { imageUrls } = req.body; // Assuming you have an array of S3 image URLs
+    case 'POST':
+      try {
+        const artistId = req.query.artistId;
+        const artist = await Artist.findById(artistId);
 
-          // Apply logic to add image URLs to the artist's images
-          artist.image = artist.image.concat(imageUrls);
-  
-          await artist.save();
-
-      
-          res.status(201).json({ success: true, message: 'Artist saved successfully' });
-        
-        } catch (error) {
-          console.error('POST Error:', error);
-          res.status(500).json({ success: false, error: error.message });
+        if (!artist) {
+          return res.status(404).json({ success: false, message: 'User or artist not found' });
         }
-        break;
-      
+
+        const { imageUrls } = req.body;
+
+  
+        const imageDocuments = imageUrls.map((imageUrl) => new Image({ imageURL: imageUrl }));
+        
+        // Save the Image documents to the database
+        const savedImages = await Image.insertMany(imageDocuments);
+        console.log('savedImages' + savedImages)
+
+        // Get the IDs of the saved Image documents
+        const imageURLS = savedImages.map((image) => image.imageURL);
+
+        // Update the artist's `image` field with the IDs of the saved images
+        artist.image = artist.image.concat(imageURLS);
+
+        await artist.save();
+
+        res.status(201).json({ success: true, message: 'Artist saved successfully' });
+
+      } catch (error) {
+        console.error('POST Error:', error);
+        res.status(500).json({ success: false, error: error.message });
+      }
+      break;
 
     default:
       res.status(400).json({ success: false, message: 'Invalid method' });

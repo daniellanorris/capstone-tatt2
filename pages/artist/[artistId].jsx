@@ -24,18 +24,26 @@ export default function ArtistPage(req) {
   }, [artistIdNew]);
 
   return (
-    <div>
-      <h1>Artist Page</h1>
-      <p>Artist ID: {artistIdNew}</p>
-      {artistData && (
-        <div class="card">
-          <h2>Artist Details</h2>
-          <p> Id: {artistData._id}</p>
-          <p>Username: {artistData.username}</p>
-          <p>First Name: {artistData.firstname}</p>
-          <p>Last Name: {artistData.lastname}</p>
-        </div>
-      )}
-    </div>
+    <>
+    {artistData && (
+      <div class="card">
+        <h2>Artist Details</h2>
+        <p> Id: {artistData._id}</p>
+        <p>Username: {artistData.username}</p>
+        <p>First Name: {artistData.firstname}</p>
+        <p>Last Name: {artistData.lastname}</p>
+        <h3>Images:</h3>
+          <div className="row">
+            {artistData.image.map((imageUrl, index) => (
+              <div key={index} className="col-md-3">
+                <div class="container" width="100px" height="100px">
+                <img src={imageUrl} alt={`Image ${index}`} className="img-fluid"/>
+                </div>
+              </div>
+            ))}
+          </div>
+      </div>
+    )}
+    </>
   );
 }

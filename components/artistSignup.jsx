@@ -39,7 +39,8 @@ export default function SignupArtists() {
           firstname,
           lastname,
           location,
-          isArtist
+          isArtist, 
+          image: [],
         }),
       });
 

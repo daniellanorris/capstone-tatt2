@@ -117,7 +117,7 @@ export default function Home() {
                 <>
                     <h1>Home</h1>
                     <h2>Welcome, {username}</h2>
-                    <div> Id : {artistIdNew} </div>
+                    {isUser ? (<div> Id: {userId} </div>) : (<div> Id : {artistIdNew} </div>)}
                     <div> Hey friend! It looks like you are in {geolocationData?.address?.city}, {geolocationData?.address?.state} at area code {geolocationData?.address?.postalCode}. Here's a list of artists that are near you!</div>
                     {data && data.data && (
                         <div> <h3>Click on each card to access artist profile pages! </h3> 

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import {Image} from './Image'
 
 const tattooStylesSchema = new mongoose.Schema({
     name: {
@@ -10,16 +11,6 @@ const tattooStylesSchema = new mongoose.Schema({
 
 export const TattooStyle = mongoose.models.tattooStyles || mongoose.model('tattooStyles', tattooStylesSchema);
 
-
-
-// const imageSchema = new mongoose.Schema({
-//     imageURL: {
-//         type: String,
-//         required: true
-//     }
-// });
-
-// export const Image = mongoose.models.Image || mongoose.model('image', imageSchema);
 
 
 const ArtistSchema = new mongoose.Schema({
@@ -51,9 +42,11 @@ const ArtistSchema = new mongoose.Schema({
             ref: 'tattooStyles'
         },
     ],
-    image:
-        [
-            String]
+    image: [
+        {
+            type: String,
+        },
+    ]
 });
 
 export default mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);
