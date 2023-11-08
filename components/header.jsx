@@ -27,7 +27,6 @@ export default function Header() {
                                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                                     <li><a class="nav-link px-2 text-secondary" href="/">Home</a></li>
                                     <li><a class="nav-link px-2 text-secondary" href="/about">About</a></li>
-                                    <li><a class="nav-link px-2 text-secondary" href="/services">Services</a></li>
                                     <li><a class="nav-link px-2 text-secondary" href="/contact">Contact</a></li>
                                     {isUser === true ? (<li><a class="nav-link px-2 text-secondary" href={`/user/${userId}`}>User Profile</a></li>) : (
                                         null)

@@ -46,7 +46,21 @@ const ArtistSchema = new mongoose.Schema({
         {
             type: String,
         },
-    ]
+    ], 
+    profilePicture: 
+    {
+        type: String,
+    }, 
+    location: {
+        type: String
+    }, 
+    bio: {
+        type: String
+    }, 
+    bookingUrl: 
+    {
+        type: String
+    }
 });
 
 export default mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);

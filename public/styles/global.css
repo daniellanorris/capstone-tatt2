@@ -1,5 +1,6 @@
 a {
-    color: white;
+    color: black;
+  
 }
 
 html, body {
@@ -21,17 +22,46 @@ html, body {
   }
 
   .card {
-      border: white solid 2px;
+      border: black solid 8px;
       padding: 20px
 
   }
+
+  @font-face {
+    font-family: 'HEADERFONT';
+    src: local('HEADERFONT'),
+         url('../fonts/NeueMetana-Bold.otf');
+}
+
+h1, h2, h3 {
+    font-family: 'HEADERFONT';
+    text-transform: uppercase;
+}
+
+h1 {
+  font-size: 30px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 15px;
+}
+
 
   button {
     background-color: blueviolet;
     border: solid 2px white;
     border-radius: 10px;
+    color: white
   }
 
   a {
     text-decoration: none;
+  }
+
+  .selected {
+    background-color: green;
   }
