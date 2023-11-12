@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import {Image} from './Image'
 
 const tattooStylesSchema = new mongoose.Schema({
     name: {
@@ -23,7 +22,6 @@ const ArtistSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Password needs to be added'],
-        unique: false,
         maxlength: [100, 'Password cannot be more than 100 characters'],
     },
     firstname: {
@@ -62,5 +60,11 @@ const ArtistSchema = new mongoose.Schema({
         type: String
     }
 });
+
+ArtistSchema.pre('save', async function(next) {
+    if (this.isNew)
+      this.password = await bcrypt.hash(this.password, 10)
+    next()
+  })
 
 export default mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);

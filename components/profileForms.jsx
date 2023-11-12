@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
 
-const ImageUploadForm = () => {
-  const { selectedFile, setSelectedFile, imageData, setImageData, artistIdNew} = useUserData();
+const ProfileUploadForm = () => {
+  const { selectedFile, setSelectedFile, profileData, setProfileData, artistIdNew} = useUserData();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -25,7 +25,7 @@ const ImageUploadForm = () => {
   
     const params = {
       Bucket: 'tatt2-images',
-      Key: `uploads/${Date.now()}-${selectedFile.name}`,
+      Key: `uploads/profile-${Date.now()}-${selectedFile.name}`,
       Body: 
           selectedFile
     };
@@ -33,7 +33,7 @@ const ImageUploadForm = () => {
     s3.upload(params, (err, data) => {
       if (err) {
         console.error(err);
-        alert('Image upload to S3 failed.');
+        alert('Profile Picture upload failed.');
       } else {
         alert('Image uploaded successfully.');
   
@@ -41,23 +41,26 @@ const ImageUploadForm = () => {
   
         // S3 URL for storage
         const s3Url = data.Location;
+
+        console.log(s3Url)
   
         // Client
-        const imageUrl = URL.createObjectURL(selectedFile);
-        setImageData(imageUrl);
-  
-        // Send the S3 URL to the API
-        const imageUrls = [s3Url]; // Store the URL(s) in an array
-        sendImageUrlsToAPI(imageUrls);
+        const profileUrl = URL.createObjectURL(selectedFile);
+        setProfileData(profileUrl);
+
+        
+        const profileUrls = s3Url; 
+        sendProfileUrlsToAPI(profileUrls);
+       
       }
     });
   };
   
-  const sendImageUrlsToAPI = (imageUrls) => {
+  const sendProfileUrlsToAPI = (profileUrls) => {
    
-    fetch(`/api/artist/${artistIdNew}/images`, {
+    fetch(`/api/artist/${artistIdNew}/profile`, {
       method: 'POST',
-      body: JSON.stringify({ imageUrls }), // Send the array of image URLs
+      body: JSON.stringify({ profileUrls }), 
       headers: {
         'Content-Type': 'application/json',
       },
@@ -78,12 +81,14 @@ const ImageUploadForm = () => {
 
   return (
     <div>
-      <h2>Image Upload</h2>
+      <h2>Change Your Profile Picture</h2>
+      <p> Select an image to update your profile picture!</p>
       <input type="file" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload Image</button>
-      {imageData && <img src={imageData} alt="Uploaded Image" width="500" height="auto"/>}
+      {profileData && <img src={profileData} alt="Uploaded Image" width="500" height="auto"/>}
     </div>
   );
 };
 
-export default ImageUploadForm;
+
+export default ProfileUploadForm;

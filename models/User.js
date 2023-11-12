@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
 
 
 const savedArtistsSchema = new mongoose.Schema({
@@ -24,7 +25,6 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Password needs to be added'],
-        unique: false,
         maxlength: [100, 'Password cannot be more than 100 characters']
     },
     firstname: {
@@ -42,6 +42,9 @@ const userSchema = new mongoose.Schema({
         ref: 'Artist', 
         required: false
     }], 
+    profileUrl: {
+        type: String
+    },
     location: [
         {
             latitude: {
@@ -56,5 +59,13 @@ const userSchema = new mongoose.Schema({
         }
     ]
 });
+
+
+
+userSchema.pre('save', async function(next) {
+    if (this.isNew)
+      this.password = await bcrypt.hash(this.password, 10)
+    next()
+  })
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);

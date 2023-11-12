@@ -23,7 +23,7 @@ class MyDocument extends Document {
           <script src="https://js.radar.com/v3/radar.min.js"></script>
         </Head>
         <body>
-          <Main />
+          <Main/>
           <NextScript />
         </body>
       </Html>

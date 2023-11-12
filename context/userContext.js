@@ -9,17 +9,19 @@ export const UserContextProvider = ({ children }) => {
   const [isArtist, setIsArtist] = useState(null);
   const [isUser, setIsUser] = useState(null)
   const [isLoggedIn, setIsLoggedIn] = useState(null)
-  const [savedArtists, setSavedArtists] = useState(null);
+  const [savedArtists, setSavedArtists] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null)
   const [imageData, setImageData] = useState(null); 
+  const [profileData, setProfileData] = useState(null)
 
   useEffect(() => {
     const token = cookie.get('token');
     if (token) {
-      const { userId, isUser, isArtist, isLoggedIn, artistIdNew} = JSON.parse(token);
+      const { userId, isUser, isArtist, isLoggedIn, artistIdNew, savedArtists} = JSON.parse(token);
       setUserId(userId);
       setArtistId(artistIdNew);
       setIsLoggedIn(isLoggedIn)
+      setSavedArtists(savedArtistsArray => savedArtistsArray || []);
       if(isArtist === true) {
         setIsArtist(true)
       }
@@ -30,7 +32,7 @@ export const UserContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userId, setUserId, isArtist, setIsArtist, isUser, setIsUser, setIsLoggedIn, isLoggedIn, savedArtists, setSavedArtists, artistIdNew, setArtistId, setSelectedFile, selectedFile, imageData, setImageData  }}>
+    <UserContext.Provider value={{ userId, setUserId, isArtist, setIsArtist, isUser, setIsUser, setIsLoggedIn, isLoggedIn, savedArtists, setSavedArtists, artistIdNew, setArtistId, setSelectedFile, selectedFile, imageData, setImageData, profileData, setProfileData  }}>
       {children}
     </UserContext.Provider>
   );

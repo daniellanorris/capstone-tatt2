@@ -7,12 +7,11 @@ dbConnect();
 
 export default async (req, res) => {
   const { method } = req;
-  const { userId } = req.query;
 
   switch (method) {
     case 'POST':
       try {
-        const { artistId } = req.body;
+        const { artistId, userId} = req.body;
         const user = await User.findById(userId);
         const artist = await Artist.findById(artistId);
         console.log(artist)
@@ -33,6 +32,7 @@ export default async (req, res) => {
 
     case 'GET':
       try {
+        const {userId} = req.query
         const user = await User.findById(userId).populate('savedArtists');
 
         if (!user) {

@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
+import placeholder from '../public/placeholder.jpg'
 
-const ImageUploadForm = () => {
-  const { selectedFile, setSelectedFile, imageData, setImageData, artistIdNew} = useUserData();
+const UserImageUploadForm = () => {
+  const { selectedFile, setSelectedFile, profileData, setProfileData, userId} = useUserData();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
   };
   const handleUpload = () => {
-    if (!selectedFile) {
-      alert('Please select a file to upload.');
-      return;
-    }
-  
+
     AWS.config.update({
       accessKeyId: 'AKIAZJUT7CEXODUZBHF5',
       secretAccessKey: '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',
@@ -42,22 +39,21 @@ const ImageUploadForm = () => {
         // S3 URL for storage
         const s3Url = data.Location;
   
-        // Client
-        const imageUrl = URL.createObjectURL(selectedFile);
-        setImageData(imageUrl);
-  
-        // Send the S3 URL to the API
-        const imageUrls = [s3Url]; // Store the URL(s) in an array
-        sendImageUrlsToAPI(imageUrls);
+        const profileUrl = URL.createObjectURL(selectedFile);
+        setProfileData(profileUrl);
+
+       
+        const profileUrls = s3Url; 
+        sendImageUrlsToAPI(profileUrls);
       }
     });
   };
   
-  const sendImageUrlsToAPI = (imageUrls) => {
+  const sendImageUrlsToAPI = (profileUrls) => {
    
-    fetch(`/api/artist/${artistIdNew}/images`, {
+    fetch(`/api/user/${userId}/images`, {
       method: 'POST',
-      body: JSON.stringify({ imageUrls }), // Send the array of image URLs
+      body: JSON.stringify({ profileUrls }), // Send the array of image URLs
       headers: {
         'Content-Type': 'application/json',
       },
@@ -77,13 +73,18 @@ const ImageUploadForm = () => {
   
 
   return (
-    <div>
-      <h2>Image Upload</h2>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload Image</button>
-      {imageData && <img src={imageData} alt="Uploaded Image" width="500" height="auto"/>}
+    <div className="container mt-5">
+      <div className="row justify-content-center align-items-center">
+        <div className="col-md-6">
+          <input type="file" onChange={handleFileChange} className="form-control mb-3" />
+          <button onClick={handleUpload} className="btn btn-primary">Upload Image</button>
+          {profileData && (
+            <img src={profileData || placeholder} alt="Uploaded Image" className="img-fluid mt-3" style={{width:"100px"}} />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default ImageUploadForm;
+export default UserImageUploadForm;

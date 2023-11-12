@@ -13,7 +13,7 @@ export default function SignupUsers() {
     const { setIsUser } = useUserData();
     const { setIsArtist } = useUserData();
     const {isLoggedIn, setIsLoggedIn} = useUserData()
-    
+
     setIsUser(true); 
     setIsArtist(false)
 
@@ -39,7 +39,7 @@ export default function SignupUsers() {
 
                 setMessage('Signup successful');
                 setIsLoggedIn(true)
-                router.push('/');
+                router.push(`/user/${userId}/profilePicture`);
             } else if (response.status === 400) {
                 const data = await response.json();
                 setMessage(data.message);

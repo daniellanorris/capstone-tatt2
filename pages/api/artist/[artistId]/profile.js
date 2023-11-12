@@ -33,20 +33,11 @@ export default async (req, res) => {
           return res.status(404).json({ success: false, message: 'User or artist not found' });
         }
 
-        const { imageUrls } = req.body;
+        const {profileUrls} = req.body
+        console.log(req.body)
 
   
-        const imageDocuments = imageUrls.map((imageUrl) => new Image({ imageURL: imageUrl }));
-        
-        // Save the Image documents to the database
-        const savedImages = await Image.insertMany(imageDocuments);
-        console.log('savedImages' + savedImages)
-
-        // Get the IDs of the saved Image documents
-        const imageURLS = savedImages.map((image) => image.imageURL);
-
-        // Update the artist's `image` field with the IDs of the saved images
-        artist.image = artist.image.concat(imageURLS);
+        artist.profilePicture = profileUrls
 
         await artist.save();
 

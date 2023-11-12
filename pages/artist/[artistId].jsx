@@ -22,9 +22,10 @@ export default function ArtistPage(req) {
         console.error('Error fetching data:', error);
       });
   }, [artistIdNew]);
-
+  
   return (
     <>
+   <div style={{ backgroundImage: `url('/tatt_bg.jpg')`, width: 'auto' }}>
     {artistData && (
       <div class="card">
         <h2>Artist Details</h2>
@@ -42,8 +43,11 @@ export default function ArtistPage(req) {
               </div>
             ))}
           </div>
+          <h3> Profile Picture: </h3>
+              <img src={artistData.profilePicture} width="100px" height="auto"/> 
       </div>
     )}
+    </div>
     </>
   );
 }
