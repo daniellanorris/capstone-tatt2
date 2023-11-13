@@ -1,3 +1,5 @@
+import {Image} from 'react-bootstrap'
+
 export default function Footer() {
 
     return (
@@ -5,7 +7,9 @@ export default function Footer() {
         <footer class="footer">
             <nav>
                 <div class="logo">
-                    <a href="/">Your Logo</a>
+                    <a href="/">
+                    <Image src="/logo.png" width={100} height={100} />
+                    </a>
                 </div>
                 <div>
                     <a href="/">Home</a>

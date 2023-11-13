@@ -31,59 +31,59 @@ export default function Home() {
 
 
                 if (userId) {
-                    // Fetch saved artists data
+
                     const savedArtistsResponse = await fetch(`/api/user/${userId}/savedArtists`);
+
                     if (!savedArtistsResponse.ok) {
                         throw new Error(`Failed to fetch saved artists data. Status: ${savedArtistsResponse.status}`);
                     }
 
-                    // Parse response
                     const savedArtistsData = await savedArtistsResponse.json();
 
-                    // Set saved artists data to the context
+
                     setSavedArtists(savedArtistsData);
+
+                    console.log('savedartists', savedArtistsData);
                 }
 
-                // Fetch other data (user and artist)
                 const [userResponse, artistResponse] = await Promise.all([
                     fetch('/api/user'),
                     fetch('/api/artist'),
                 ]);
 
-                // Check if responses are OK
                 if (!userResponse.ok || !artistResponse.ok) {
                     throw new Error(`Failed to fetch user or artist data.`);
                 }
 
-                // Parse responses
+
                 const userData = await userResponse.json();
                 const artistData = await artistResponse.json();
 
-             
-                    setData(userData)
 
-                    if (Array.isArray(userData.data) && userData.data.length > 0) {
-                        console.log('artistData:', userData.data);
+                setData(userData)
 
-                        // Access the first item's _id
-                        console.log('First artist _id:', userData.data[0]._id);
-                    } else {
-                        console.log('No artist data available.');
-                    }
-                
-            
-                    setData(artistData);
+                if (Array.isArray(userData.data) && userData.data.length > 0) {
+                    console.log('artistData:', userData.data);
 
-                    if (Array.isArray(artistData.data) && artistData.data.length > 0) {
-                        console.log('artistData:', artistData.data);
+                    // Access the first item's _id
+                    console.log('First artist _id:', userData.data[0]._id);
+                } else {
+                    console.log('No artist data available.');
+                }
 
-                        // Access the first item's _id
-                        console.log('First artist _id:', artistData.data[0]._id);
-                    } else {
-                        console.log('No artist data available.');
-                    }
 
-                
+                setData(artistData);
+
+                if (Array.isArray(artistData.data) && artistData.data.length > 0) {
+                    console.log('artistData:', artistData.data);
+
+                    // Access the first item's _id
+                    console.log('First artist _id:', artistData.data[0]._id);
+                } else {
+                    console.log('No artist data available.');
+                }
+
+
 
 
 
@@ -108,13 +108,13 @@ export default function Home() {
         console.log('saveArtist function called');
         console.log('artistId:', artistId);
         console.log('userId:', userId);
+
         try {
             // Check if the artist is already saved
             if (savedArtists && savedArtists[artistId]) {
                 console.log('Artist is already saved');
                 setMessage('Artist is already saved');
             } else {
-                // Save the artist
                 console.log('Saving artist...');
                 const res = await fetch(`/api/user/${userId}/savedArtists`, {
                     method: 'POST',
@@ -127,7 +127,6 @@ export default function Home() {
                 console.log('Response:', res);
 
                 if (res.status === 201) {
-                    // Update savedArtists in the context
                     setSavedArtists((prevSavedArtists) => ({
                         ...prevSavedArtists,
                         [artistId]: true,
@@ -146,13 +145,14 @@ export default function Home() {
         }
     }
 
+
     async function tattooStyles() {
         setIsTattooStyle((prevState) => !prevState);
     }
 
 
     return (
-        <div style={{marginLeft: "10px"}}>
+        <div style={{ marginLeft: "10px" }}>
             {isLoggedIn ? (
                 <div>
                     <h1>Home</h1>
@@ -168,7 +168,7 @@ export default function Home() {
                         artists that are near you!
                     </div>
 
-                    <div class="container" style={{marginTop: "20px", marginBottom: "20px"}}>
+                    <div class="container" style={{ marginTop: "20px", marginBottom: "20px" }}>
                         <div class="row">
                             <div class="col-12 d-flex align-items-center justify-content-center">
                                 <button
@@ -183,7 +183,7 @@ export default function Home() {
                                     Filter By # of Likes
                                 </button>
                                 <button
-                             
+
                                     className={selectedButtons['tattoostyle'] ? 'selected' : ''}
                                     onClick={() => {
                                         tattooStyles();
@@ -237,7 +237,7 @@ export default function Home() {
                                 <ul style={{ padding: "0px" }}>
                                     {data.data.map((item, index) => (
                                         <div key={index} className="card m-4 d-flex justify-content-end">
-                                            {/* Link to artist profile page */}
+
                                             <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
 
                                                 <h3 className="custom-card-header">
@@ -263,8 +263,8 @@ export default function Home() {
                                             </Link>
                                             {isUser ? (
                                                 <button
-                                                    style={{width: "50%"}}
-                                                    className={savedArtists && savedArtists[item._id] ? 'saved-button' : ''}
+                                                    style={{ width: "50%" }}
+                                                    className={`button ${savedArtists && savedArtists[item._id] ? 'selected' : ''}`}
                                                     onClick={() => saveArtist(item._id, userId)}
                                                 >
                                                     {savedArtists && savedArtists[item._id] ? 'Saved Artist' : 'Save Artist'}
@@ -280,8 +280,10 @@ export default function Home() {
                 </div>
             ) : (
                 <div>
+                    <h3>Whoa, there! </h3>
                     <p>You are not logged in. Please log in.</p>
-                    <Link href="/signup">Login</Link>
+                    <Link href="/login">
+                        <button>Login</button></Link>
                 </div>
             )}
         </div>
