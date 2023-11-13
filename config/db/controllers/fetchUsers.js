@@ -3,7 +3,7 @@ import axios from 'axios';
 async function fetchUsers() {
   try {
     const response = await axios.get(`/api/user/`);
-    const userData = response.data; // Assuming the data is an array of artists
+    const userData = response.data; // Assuming the data is an array of users
     console.log(userData);
     return userData;
   } catch (error) {

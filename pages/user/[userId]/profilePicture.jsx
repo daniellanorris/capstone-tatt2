@@ -1,4 +1,5 @@
 import UserImageUploadForm from '../../../components/userImageForm'
+import Link from 'next/link';
 
 export default function initUserProfile() {
 
@@ -8,7 +9,11 @@ export default function initUserProfile() {
         <div className="card">
         <UserImageUploadForm/>
         <div style={{width: "30px", margin:"30px"}} className="mx-auto">
-        <button> Next </button>
+        <Link href="/">
+
+          <button type="button">Next</button>
+
+      </Link>
         </div>
         </div>
      

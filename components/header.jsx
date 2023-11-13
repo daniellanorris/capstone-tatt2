@@ -2,7 +2,7 @@
 import { useUserData } from '../context/userContext';
 import Logout from './handleLogout'
 import React from 'react'
-import Image from 'next/image'
+import { Image, Navbar, Nav, Container } from 'react-bootstrap';
 
 export default function Header() {
     const { userId, isArtist, isUser, isLoggedIn, artistIdNew, profileData, artistProfileData } = useUserData()
@@ -13,55 +13,38 @@ export default function Header() {
 
     return (
         <>
-            <header expand="lg" class="p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', color: 'black', marginBottom: '10px'}}>
-                <div class="container" >
-                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <div>
-                            <div class="logo">
-                                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                    <Image src="/logo.png" width={100} height={100} />
-                                </a>
-                            </div>
+          <Navbar expand="lg" className="p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', color: 'black', marginBottom: '10px', width: '100vw' }}>
+            <Container>
+              <Navbar.Brand href="/" className="d-flex align-items-center text-white text-decoration-none">
+                <Image src="/logo.png" width={100} height={100} />
+              </Navbar.Brand>
+    
+              <Navbar.Toggle aria-controls="navbarNav" />
+    
+              <Navbar.Collapse id="navbarNav" className="justify-content-between">
+                {isLoggedIn === true && (
+                  <Nav className="me-auto">
+                    <Nav.Link href="/"><h3>Home</h3></Nav.Link>
+                    <Nav.Link href="/about"><h3>About</h3></Nav.Link>
+                    <Nav.Link href="/contact"><h3>Contact</h3></Nav.Link>
+                    {isUser === true && <Nav.Link href={`/user/${userId}`}><h3>User Profile</h3></Nav.Link>}
+                    {isArtist === true && <Nav.Link href={`/artist/${artistIdNew}`}><h3>Artist Profile</h3></Nav.Link>}
+                  </Nav>
+                )}
 
-                        </div>
-                        {isLoggedIn === true ? (
-                            <div>
-                                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                                    <li><a class="nav-link px-2 text-black" href="/"><h3>Home</h3></a></li>
-                                    <li><a class="nav-link px-2 text-black" href="/about"><h3>About</h3></a></li>
-                                    <li><a class="nav-link px-2 text-black" href="/contact"><h3>Contact</h3></a></li>
-                                    {isUser === true ? (<li><a class="nav-link px-2 text-black" href={`/user/${userId}`}><h3>User Profile</h3></a></li>) : (
-                                        null)
-                                    }
-                                    {isArtist === true ? (
-                                        <li><a class="nav-link px-2 text-black" href={`/artist/${artistIdNew}`}><h3>Artist Profile</h3></a></li>
-                                    ) : (
-                                        null
-                                    )
-                                    }
-                                    <li>  <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                        <div style={{ borderRadius: "60px", border: "8px solid orange", overflow: "hidden" }}>
-                                            <img src={profileData || artistProfileData} width={100} height={100} />
-                                        </div>
-                                    </a></li>
-                                </ul>
-                                <div>
-
-                                </div>
-                            </div>
-                        ) : (
-                            null
-                        )
-                        }
-                        {isLoggedIn === true ? (
-                            <Logout />
-                        ) : (
-                            null
-
-                        )
-                        }                   </div>
+              </Navbar.Collapse>
+              <div className="d-flex align-items-center">
+                  {isLoggedIn === true && (
+                    <>
+                      <div style={{ borderRadius: '60px', border: '8px solid orange', overflow: 'hidden' }}>
+                        <Image src={profileData || artistProfileData} width={100} height={100} />
+                      </div>
+                      <Logout />
+                    </>
+                  )}
                 </div>
-            </header>
+            </Container>
+          </Navbar>
         </>
-    );
-}
+      );
+    };

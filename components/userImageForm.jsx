@@ -11,7 +11,11 @@ const UserImageUploadForm = () => {
     setSelectedFile(file);
   };
   const handleUpload = () => {
-
+    if (!selectedFile) {
+      console.error('No file selected for upload.');
+      return;
+    }
+  
     AWS.config.update({
       accessKeyId: 'AKIAZJUT7CEXODUZBHF5',
       secretAccessKey: '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',
@@ -23,8 +27,7 @@ const UserImageUploadForm = () => {
     const params = {
       Bucket: 'tatt2-images',
       Key: `uploads/${Date.now()}-${selectedFile.name}`,
-      Body: 
-          selectedFile
+      Body: selectedFile,
     };
   
     s3.upload(params, (err, data) => {
@@ -41,9 +44,8 @@ const UserImageUploadForm = () => {
   
         const profileUrl = URL.createObjectURL(selectedFile);
         setProfileData(profileUrl);
-
-       
-        const profileUrls = s3Url; 
+  
+        const profileUrls = s3Url;
         sendImageUrlsToAPI(profileUrls);
       }
     });

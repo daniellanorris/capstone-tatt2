@@ -29,6 +29,7 @@ export default function Signup() {
                     </div>
                 </div>
             </div>
+            <p> <a href="/login"> Login instead? Click here. </a></p> 
         </div>
     );
 }

@@ -30,6 +30,14 @@ export const UserContextProvider = ({ children }) => {
       if (isUser === true) {
         setIsUser(true);
       }
+      else {
+        setUserId(null);
+        setArtistId(null);
+        setIsLoggedIn(null);
+        setIsArtist(null);
+        setIsUser(null);
+        setSavedArtists([]);
+      }
     }
 
     const fetchUserData = async () => {

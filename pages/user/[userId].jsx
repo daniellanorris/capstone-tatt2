@@ -55,33 +55,39 @@ export default function UserProfile() {
     }, [artistIdNew]);
 
     return (
-        <div style={{ backgroundImage: `url('/oranges.jpg')`, width: 'auto' }}>
-            <UserImageUploadForm />
-            {imageData && (
-                <img src={imageData.imageUrl} alt="Artist Image" />
-            )}
-
-            <h1>User Profile</h1>
-            <div>User ID: {userId}</div>
-            <div class="card">
-                <h2>Saved Artists</h2>
-                <ul>
-                    {Array.isArray(newArtist.data) ? (
-                        newArtist.data.map((artist) => (
-                            <li key={artist._id}>
-                                <div> {artist.username} </div>
-                            </li>
-                        ))
-                    ) : (
-                        <li>
-                            <div>No saved artists available.</div>
-                        </li>
-                    )}
-                </ul>
+        <div className="container">
+          <h1 className="text-left mt-4">User Profile</h1>
+    
+          <div className="row mt-4">
+            <div className="col-md-6">
+              <div className="card">
+                <UserImageUploadForm />
+              </div>
             </div>
-            <div class="card">
+    
+            <div className="col-md-6">
+              {imageData && (
+                <div className="card">
+                  <img src={imageData.imageUrl} alt="Artist Image" className="img-fluid" />
+                </div>
+              )}
             </div>
+          </div>
+    
+          <div className="card mt-4 p-4">
+            <h2 className="card-title">Saved Artists</h2>
+            <ul className="list-group list-group-flush">
+              {Array.isArray(newArtist.data) && newArtist.data.length > 0 ? (
+                newArtist.data.map((artist) => (
+                  <li key={artist._id} className="list-group-item">
+                    @{artist.username}
+                  </li>
+                ))
+              ) : (
+                <li className="list-group-item">No saved artists available.</li>
+              )}
+            </ul>
+          </div>
         </div>
-
-    );
-}
+      );
+    };

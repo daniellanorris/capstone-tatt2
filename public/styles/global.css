@@ -78,10 +78,12 @@ h3 {
 
 
   button {
-    background-color: blueviolet;
-    border: solid 2px white;
+    background-color: #F27178;
     border-radius: 10px;
-    color: white
+    border: none;
+    padding: 5px;
+    color: white;
+    margin: 2px;
   }
 
   a {

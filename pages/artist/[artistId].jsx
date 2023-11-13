@@ -34,29 +34,44 @@ export default function ArtistPage() {
   }, [artistId]);
 
   return (
-    <div style={{ backgroundImage: `url('/tatt_bg.jpg')`, width: 'auto' }}>
+    <div style={{ width: 'auto', height: '100vw' }}>
+      <h1>Profile</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="card">
-          <h2>Artist Details</h2>
-          <p>Id: {artistData?.data._id}</p>
-          <p>Username: {artistData?.data.username}</p>
-          <p>First Name: {artistData?.data.firstname}</p>
-          <p>Last Name: {artistData?.data.lastname}</p>
-          <h3>Images:</h3>
-          <div className="row">
-            {Array.isArray(artistData.data.image) &&
-              artistData.data.image.map((imageUrl, index) => (
-                <div key={index} className="col-md-3">
-                  <div className="container" width="100px" height="100px">
-                    <img src={imageUrl} alt={`Image ${index}`} className="img-fluid" />
-                  </div>
-                </div>
-              ))}
+        <div className="row">
+          <div className="col-md-4 mb-4">
+            <div class="card">
+              <h2 className="card-title">Artist Details</h2>
+              <p className="card-text">Id: {artistData?.data._id}</p>
+              <p className="card-text">Username: {artistData?.data.username}</p>
+              <p className="card-text">First Name: {artistData?.data.firstname}</p>
+              <p className="card-text">Last Name: {artistData?.data.lastname}</p>
+            </div>
           </div>
-          <h3>Profile Picture:</h3>
-          <img src={artistData.data.profilePicture} width="100px" height="auto" alt="Profile" />
+          <div className="col-md-8 mb-4">
+  <div className="card">
+    <h3 className="card-title">Images:</h3>
+    <div className="row">
+      {artistData && artistData.data && artistData.data.image && artistData.data.image.map((imageUrl, index) => (
+        <div key={index} className="col-md-3 mb-2">
+          <div className="card image-container">
+            <img src={imageUrl} alt={`Image ${index}`} className="card-img-top img-fluid" style={{ width: "200px", height: "auto" }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+          <div className="col-md-4 mb-4">
+          <div class="card">
+  <h3>Profile Picture:</h3>
+  {artistData && artistData.data && artistData.data.profilePicture && (
+    <img src={artistData.data.profilePicture} width="100px" height="auto" alt="Profile" />
+  )}
+</div>
+          </div>
         </div>
       )}
     </div>
