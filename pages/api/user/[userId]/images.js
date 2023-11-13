@@ -5,11 +5,13 @@ import User from '../../../../models/User';
 dbConnect();
 
 export default async (req, res) => {
+
   const { method} = req;
 
   switch (method) {
     case 'GET':
       try {
+        
         const userId = req.query.userId
         const user = await User.findById(userId);
 

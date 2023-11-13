@@ -5,8 +5,9 @@ import React from 'react'
 import Image from 'next/image'
 
 export default function Header() {
-    const { userId, isArtist, isUser, isLoggedIn, artistIdNew, profileData } = useUserData()
+    const { userId, isArtist, isUser, isLoggedIn, artistIdNew, profileData, artistProfileData } = useUserData()
     console.log('profileData' + profileData)
+
 
     console.log(userId)
 
@@ -39,8 +40,8 @@ export default function Header() {
                                     )
                                     }
                                     <li>  <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                        <div style={{ borderRadius: "60px", border: "8px solid orange" }}>
-                                            <img src={profileData} width={100} height={100} />
+                                        <div style={{ borderRadius: "60px", border: "8px solid orange", overflow: "hidden" }}>
+                                            <img src={profileData || artistProfileData} width={100} height={100} />
                                         </div>
                                     </a></li>
                                 </ul>

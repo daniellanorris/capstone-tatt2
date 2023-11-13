@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const tattooStylesSchema = new mongoose.Schema({
     name: {
@@ -8,7 +9,7 @@ const tattooStylesSchema = new mongoose.Schema({
     }
 });
 
-export const TattooStyle = mongoose.models.tattooStyles || mongoose.model('tattooStyles', tattooStylesSchema);
+module.exports = mongoose.models.tattooStyles || mongoose.model('tattooStyles', tattooStylesSchema);
 
 
 
@@ -36,7 +37,7 @@ const ArtistSchema = new mongoose.Schema({
     },
     tattooStyle: [
         {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'tattooStyles'
         },
     ],
@@ -67,4 +68,4 @@ ArtistSchema.pre('save', async function(next) {
     next()
   })
 
-export default mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);
+module.exports = mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);

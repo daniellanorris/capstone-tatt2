@@ -4,7 +4,7 @@ import { useUserData } from '../../../context/userContext';
 import ProfileUploadForm from '../../../components/profileForms'
 
 export default function ImageForm() {
-  const { artistIdNew, profileData, setProfileData } = useUserData();
+  const { artistIdNew, setArtistProfileData } = useUserData();
   const [imageData, setImageData] = useState(null);
 
 
@@ -33,7 +33,7 @@ export default function ImageForm() {
         const response = await fetch(`/api/artist/${artistIdNew}/profile`);
         if (response.ok) {
           const data = await response.json();
-          setProfileData(data)
+          setArtistProfileData(data)
           set
         } else {
           console.error('Failed to fetch image data');
@@ -50,12 +50,10 @@ export default function ImageForm() {
     <div style={{ backgroundImage: `url('/oranges.jpg')`, width: 'auto' }}>
       <ImageUploadForm />
       {imageData && (
-        <img src={imageData.imageUrl} alt="Artist Image" />
+        <img src={imageData} alt="Artist Image" />
       )}
       <ProfileUploadForm />
-      {profileData && (
-        <img src={profileData.profileUrls} alt="Profile Picture" />
-      )}
+     
     </div>
   );
 }

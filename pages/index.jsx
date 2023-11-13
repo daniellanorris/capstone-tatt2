@@ -3,6 +3,7 @@ import Link from 'next/link';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
 import GeoLocationData from '../components/geolocationData';
+import placeholder from 'public/placeholder.jpeg'
 
 export default function Home() {
     const [data, setData] = useState(null);
@@ -59,8 +60,20 @@ export default function Home() {
                 const artistData = await artistResponse.json();
 
 
+
+
                 // Store user data
                 setData(artistData);
+
+                if (Array.isArray(artistData.data) && artistData.data.length > 0) {
+                    console.log('artistData:', artistData.data);
+
+                    // Access the first item's _id
+                    console.log('First artist _id:', artistData.data[0]._id);
+                } else {
+                    console.log('No artist data available.');
+                }
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError(error.message);
@@ -190,20 +203,26 @@ export default function Home() {
                             ) : null}
                         </div>
                     </div>
+
                     {data && data.data && (
                         <div>
-                            {' '}
-                            <h3>Click on each card to access artist profile pages! </h3>
+                            <h3>Click on each card to access artist profile pages!</h3>
                             {error ? (
                                 <p>Error fetching artists: {error}</p>
                             ) : (
                                 <ul style={{ padding: "0px" }}>
                                     {data.data.map((item, index) => (
                                         <div key={index} className="card m-4">
+                                            {/* Link to artist profile page */}
                                             <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
+
                                                 <h3 className="custom-card-header">
                                                     {item.firstname} {item.lastname}
                                                 </h3>
+
+                                                <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                    <img src={item.profilePicture ? item.profilePicture : placeholder} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
+                                                </div>
                                                 <p>@{item.username}</p>
                                                 <p>Location: {item.location} </p>
                                                 {item.tattooStyle && item.tattooStyle.length > 0 && (
@@ -216,9 +235,9 @@ export default function Home() {
                                                         </ul>
                                                     </div>
                                                 )}
+
                                             </Link>
                                             {isUser ? (
-
                                                 <button
                                                     className={savedArtists && savedArtists[item._id] ? 'saved-button' : ''}
                                                     onClick={() => saveArtist(item._id, userId)}
@@ -237,7 +256,7 @@ export default function Home() {
             ) : (
                 <div>
                     <p>You are not logged in. Please log in.</p>
-                    <Link href="/signup"> Login </Link>
+                    <Link href="/signup">Login</Link>
                 </div>
             )}
         </>

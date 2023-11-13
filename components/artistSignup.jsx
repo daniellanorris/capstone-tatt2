@@ -6,64 +6,78 @@ import { useUserData } from '../context/userContext';
 
 export default function SignupArtists() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');  
+  const [password, setPassword] = useState('');  
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [message, setMessage] = useState('');
   const [location, setLocation] = useState('');
   const [manuallyEnter, setManuallyEnter] = useState(false);
-  const { isArtist, setIsArtist } = useUserData();
+  const { setIsArtist } = useUserData();
   const { setIsUser } = useUserData();
-  const {isLoggedIn, setIsLoggedIn} = useUserData()
+  const {setIsLoggedIn, isLoggedIn} = useUserData();
+  const {setArtistId, artistIdNew} = useUserData()
 
-  const { geolocationData, error, loading } = GeoLocationData();
+  const { geolocationData, error } = GeoLocationData();
+
+  setIsArtist(true)
+  setIsUser(false)
 
   useEffect(() => {
-    setManuallyEnter(false);
-    if (!loading && geolocationData && geolocationData.address) {
+
+    if (geolocationData && geolocationData.address) {
       setLocation(`${geolocationData.address.latitude}, ${geolocationData.address.longitude}`);
     }
-  }, [geolocationData, loading]);
-
+  }, [geolocationData]);
+  
   async function handleValidation() {
     if (username && password && firstname && lastname && location) {
-      const response = await fetch('/api/artist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          firstname,
-          lastname,
-          location,
-          isArtist, 
-          image: [],
-        }),
-      });
-
-      if (response.status === 201) {
-        setMessage('Signup successful');
-        const data = await response.json();
-        const artistIdNew = data.data._id;
-        cookie.set('token', JSON.stringify({ username, isArtist: true, isUser: false, isLoggedIn: true, artistIdNew}), { expires: 1 / 24 });
-        setIsArtist(true); 
-        setIsUser(false)
-        setIsLoggedIn(true)
-        router.push('/');
-        console.log('response' +{ response });
-      } else if (response.status === 400) {
-        const data = await response.json();
-        setMessage(data.message);
-      } else {
-        setMessage('Signup failed');
+      try {
+        const response = await fetch('/api/artist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username,
+            password,
+            firstname,
+            lastname,
+            location,
+          }),
+        });
+  
+        if (response.status === 201) {
+          const data = await response.json();
+          console.log('data from server:', data);
+          const artistIdNew = data.data;  // Directly use data.data as the artist ID
+          setArtistId(artistIdNew);
+          setIsLoggedIn(true);
+          cookie.set('token', JSON.stringify({ isLoggedIn: true, artistIdNew, username, isArtist: true, isUser: false }), { expires: 1 / 24 });
+        } else if (response.status === 400) {
+          const data = await response.json();
+          setMessage(data.message);
+        } else {
+          setMessage('Signup failed');
+        }
+      } catch (error) {
+        console.error('Error during signup:', error);
+        setMessage('An unexpected error occurred');
       }
     } else {
       setMessage('Please fill out all fields');
     }
   }
+  
+  
+  useEffect(() => {
+    console.log('useEffect triggered. isLoggedIn:', isLoggedIn, 'artistIdNew:', artistIdNew);
+    if (isLoggedIn && artistIdNew) {
+      console.log('Redirecting...');
+      router.push('/');
+    }
+  }, [isLoggedIn, artistIdNew, router]);
+  
 
   return (
     <>
@@ -110,3 +124,4 @@ export default function SignupArtists() {
     </>
   );
 }
+

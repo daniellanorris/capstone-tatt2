@@ -1,7 +1,7 @@
 import React from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
-import placeholder from '../public/placeholder.jpg'
+
 
 const UserImageUploadForm = () => {
   const { selectedFile, setSelectedFile, profileData, setProfileData, userId} = useUserData();
@@ -79,7 +79,7 @@ const UserImageUploadForm = () => {
           <input type="file" onChange={handleFileChange} className="form-control mb-3" />
           <button onClick={handleUpload} className="btn btn-primary">Upload Image</button>
           {profileData && (
-            <img src={profileData || placeholder} alt="Uploaded Image" className="img-fluid mt-3" style={{width:"100px"}} />
+            <img src={profileData} alt="Uploaded Image" className="img-fluid mt-3" style={{width:"100px"}} />
           )}
         </div>
       </div>

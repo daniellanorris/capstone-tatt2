@@ -1,11 +1,16 @@
 import dbConnect from '../../../config/db/utils/dbConnect'
 import Artist from '../../../models/Artist'
 import cookie from 'cookie'
+import bcrypt from 'bcrypt'
 
 dbConnect()
 
 export default async (req, res) => {
-    const {method} = req;
+  const {
+    body: {artistId}, 
+    method
+} = req;
+
 
     switch(method) {
 
@@ -20,36 +25,39 @@ export default async (req, res) => {
             break;
           
             case 'POST':
-              try {
-                const existingArtist = await Artist.findOne({ username: req.body.username });
-            
-                if (existingArtist) {
-                  return res.status(400).json({ success: false, message: 'Username already exists' });
-                }
-            
-                const newArtist = await Artist.create(req.body);
-            
-                if (!newArtist) {
-                  return res.status(400).json({ success: false, message: 'User creation failed' });
-                }
-            
-                // Include the _id in the response
-                const artistId = newArtist._id;
-            
-                res.setHeader("Set-Cookie", cookie.serialize("tokenArtist", req.body.token, {
-                  httpOnly: true, 
-                  secure: process.env.NODE_ENV === "development",
-                  maxAge: 60 * 60, 
-                  sameSite: "strict",
-                  path: "/"
-                }));
-            
-                res.status(201).json({ success: true, data: { artistId, ...newArtist.toJSON() } });
-                console.log('data:' + data)
-              } catch (error) {
-                res.status(500).json({ success: false, error: error.message });
-              }
-              break;
+  try {
+    const { username, password, ...otherData } = req.body;  // Destructure the request body
+
+    const existingArtist = await Artist.findOne({ username });
+
+    if (existingArtist) {
+      return res.status(400).json({ success: false, message: 'Username already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Creating a new artist with hashed password
+    const newArtist = await Artist.create({ username, password: hashedPassword, ...otherData });
+
+    if (!newArtist) {
+      return res.status(400).json({ success: false, message: 'User creation failed' });
+    }
+
+    const artistId = newArtist._id;
+    res.status(201).json({ success: true, data: artistId });
+
+    res.setHeader("Set-Cookie", cookie.serialize("tokenArtist", req.body.token, {
+      httpOnly: true,
+      secure: "development",
+      maxAge: 60 * 60,
+      sameSite: "strict",
+      path: "/"
+    }));
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+  break;
+
             }            
 
 

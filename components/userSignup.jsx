@@ -12,7 +12,7 @@ export default function SignupUsers() {
     const [message, setMessage] = useState('');
     const { setIsUser } = useUserData();
     const { setIsArtist } = useUserData();
-    const {isLoggedIn, setIsLoggedIn} = useUserData()
+    const { setIsLoggedIn} = useUserData()
 
     setIsUser(true); 
     setIsArtist(false)
