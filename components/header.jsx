@@ -1,15 +1,17 @@
 
 import { useUserData } from '../context/userContext';
 import Logout from './handleLogout'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Image, Navbar, Nav, Container } from 'react-bootstrap';
 
 export default function Header() {
-    const { userId, isArtist, isUser, isLoggedIn, artistIdNew, profileData, artistProfileData } = useUserData()
-    console.log('profileData' + profileData)
+    const { userId, isArtist, isUser, isLoggedIn, artistIdNew, setArtistId, profileData, artistProfileData } = useUserData()
+    console.log('header', artistIdNew)
 
+    useEffect(() => {
+      console.log('header use effect', artistIdNew)
 
-    console.log(userId)
+    }, [artistIdNew])
 
     return (
         <>

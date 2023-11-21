@@ -23,9 +23,11 @@ export const getServerSideProps = withIronSessionSsr(
 
 
 export default function Login(props) {
+    
 
 
     const router = useRouter();
+    console.log(props.user)
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -75,7 +77,7 @@ export default function Login(props) {
                     const res = responseBody ? JSON.parse(responseBody) : {};
                     console.log('responseBody:', responseBody);
 
-                    cookie.set("token", JSON.stringify({ username, isUser: true, isArtist: false, isLoggedIn: true, userId }), { expires: 1 / 24 });
+                    cookie.set("token", JSON.stringify({ username, isUser: true, isArtist: false, isLoggedIn: true, userId }), { expires: 365 });
 
                     setMessage('Login successful');
                     setIsLoggedIn(true);

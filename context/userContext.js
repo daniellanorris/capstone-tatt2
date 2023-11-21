@@ -14,29 +14,29 @@ export const UserContextProvider = ({ children }) => {
   const [imageData, setImageData] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [artistProfileData, setArtistProfileData] = useState(null)
+  const [tattooStyles, setTattooStyles] = useState([])
+
 
   useEffect(() => {
     const token = cookie.get('token');
     if (token) {
-      setSavedArtists((savedArtistsArray) => savedArtistsArray || []);
+     
+      
       const { userId, isUser, isArtist, isLoggedIn, artistIdNew, savedArtists } = JSON.parse(token);
       setUserId(userId);
-      setArtistId(artistIdNew);
+
+      setSavedArtists((savedArtistsArray) => savedArtistsArray || []);
       setIsLoggedIn(isLoggedIn);
+
 
       if (isArtist === true) {
         setIsArtist(true);
+        setArtistId(artistIdNew);
+        console.log(artistIdNew)
+        setTattooStyles(tattooStyles)
       }
       if (isUser === true) {
         setIsUser(true);
-      }
-      else {
-        setUserId(null);
-        setArtistId(null);
-        setIsLoggedIn(null);
-        setIsArtist(null);
-        setIsUser(null);
-        setSavedArtists([]);
       }
     }
 
@@ -68,14 +68,17 @@ export const UserContextProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchArtistData = async () => {
+      if (artistIdNew !== null) {
       try {
+        console.log(artistIdNew)
         const response = await fetch(`/api/artist/${artistIdNew}/profile`);
         const result = await response.json();
+        console.log('artistid from context'+ artistIdNew)
 
         if (result.success && typeof result.data === 'object') {
           const profileUrl = result.data.profilePicture;
           console.log('profileUrl' + profileUrl)
-
+          
           if (profileUrl) {
             setArtistProfileData(profileUrl);
           } else {
@@ -88,11 +91,43 @@ export const UserContextProvider = ({ children }) => {
         console.error('Error fetching artist data:', error);
       }
     };
+    
+  }
 
-    if (artistIdNew) {
+
       fetchArtistData();
-    }
-  }, [setProfileData, artistIdNew]);
+
+  }, [setArtistProfileData, artistIdNew]);
+
+  useEffect(() => {
+    const fetchTattooStyles = async () => {
+      if (artistIdNew) {
+      try {
+        const response = await fetch(`/api/artist/${artistIdNew}`);
+        const result = await response.json();
+        console.log('artistid from context'+ artistIdNew)
+
+        if (result.success && typeof result.data === 'object') {
+          const tattooList = result.data.tattooStyles;
+          console.log('profileUrl' + tattooStyles)
+
+          if (profileUrl) {
+            setTattooStyles(tattooList);
+          } else {
+            setTattooStyles([]);
+          }
+        } else {
+          console.error('Invalid API response:', result);
+        }
+      } catch (error) {
+        console.error('Error fetching artist data:', error);
+      }
+    };
+  }
+
+      fetchTattooStyles();
+
+  }, [setTattooStyles, artistIdNew]);
 
   return (
     <UserContext.Provider
@@ -116,7 +151,9 @@ export const UserContextProvider = ({ children }) => {
         profileData,
         setProfileData,
         artistProfileData, 
-        setArtistProfileData
+        setArtistProfileData, 
+        tattooStyles, 
+        setTattooStyles
       }}
     >
       {children}

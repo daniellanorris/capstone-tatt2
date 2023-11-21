@@ -1,25 +1,30 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import {useUserData} from '../../context/userContext'
 
-export default function ArtistPage() {
-  const router = useRouter();
-  const { query } = router;
-  const { artistId } = query;
+
+export default function ArtistPage(req) {
   const [artistData, setArtistData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const {setIsLoggedIn, setIsArtist, setArtistId, artistIdNew} = useUserData();
+
+  setIsLoggedIn(true)
+  setIsArtist(true)
+  console.log(artistIdNew)
 
   useEffect(() => {
-    console.log('Current artistId:', artistId);
 
     const fetchData = async () => {
       try {
-        if (artistId !== undefined && artistId !== null) {
-          const response = await fetch(`/api/artist/${artistId}`);
+        if (artistIdNew !== undefined && artistIdNew !== null) {
+          const response = await fetch(`/api/artist/${artistIdNew}`);
           if (!response.ok) {
             throw new Error(`Failed to fetch data. Status: ${response.status}`);
           }
+
+ 
           const artistData = await response.json();
           setArtistData(artistData);
+  
 
           console.log('Artist Data:', artistData);
         }
@@ -29,9 +34,9 @@ export default function ArtistPage() {
         setLoading(false);
       }
     };
-
+    console.log('Current artistId:', artistIdNew);
     fetchData();
-  }, [artistId]);
+  }, [artistIdNew]);
 
   return (
     <div style={{ width: 'auto', height: '100vw' }}>

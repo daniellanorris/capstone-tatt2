@@ -2,12 +2,12 @@ import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 import cookie from 'js-cookie';
 import GeoLocationData from '../components/geolocationData';
-import { useUserData } from '../context/userContext'; 
+import { useUserData } from '../context/userContext';
 
 export default function SignupArtists() {
   const router = useRouter();
-  const [username, setUsername] = useState('');  
-  const [password, setPassword] = useState('');  
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [message, setMessage] = useState('');
@@ -15,21 +15,20 @@ export default function SignupArtists() {
   const [manuallyEnter, setManuallyEnter] = useState(false);
   const { setIsArtist } = useUserData();
   const { setIsUser } = useUserData();
-  const {setIsLoggedIn, isLoggedIn} = useUserData();
-  const {setArtistId, artistIdNew} = useUserData()
+  const { setIsLoggedIn, isLoggedIn } = useUserData();
+  const { setArtistId, artistIdNew } = useUserData();
 
   const { geolocationData, error } = GeoLocationData();
 
-  setIsArtist(true)
-  setIsUser(false)
+  setIsUser(true); 
+  setIsArtist(false)
 
   useEffect(() => {
-
     if (geolocationData && geolocationData.address) {
       setLocation(`${geolocationData.address.latitude}, ${geolocationData.address.longitude}`);
     }
   }, [geolocationData]);
-  
+
   async function handleValidation() {
     if (username && password && firstname && lastname && location) {
       try {
@@ -46,14 +45,14 @@ export default function SignupArtists() {
             location,
           }),
         });
-  
+
         if (response.status === 201) {
           const data = await response.json();
           console.log('data from server:', data);
-          const artistIdNew = data.data;  // Directly use data.data as the artist ID
+          const artistIdNew = data.data; 
           setArtistId(artistIdNew);
           setIsLoggedIn(true);
-          cookie.set('token', JSON.stringify({ isLoggedIn: true, artistIdNew, username, isArtist: true, isUser: false }), { expires: 1 / 24 });
+          cookie.set('token', JSON.stringify({ artistIdNew, username, isArtist: true, isUser: false }), { expires: 1 / 24 });
         } else if (response.status === 400) {
           const data = await response.json();
           setMessage(data.message);
@@ -68,16 +67,7 @@ export default function SignupArtists() {
       setMessage('Please fill out all fields');
     }
   }
-  
-  
-  useEffect(() => {
-    console.log('useEffect triggered. isLoggedIn:', isLoggedIn, 'artistIdNew:', artistIdNew);
-    if (isLoggedIn && artistIdNew) {
-      console.log('Redirecting...');
-      router.push('/');
-    }
-  }, [isLoggedIn, artistIdNew, router]);
-  
+
 
   return (
     <>

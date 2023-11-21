@@ -1,70 +1,109 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
+import { withIronSessionSsr } from "iron-session/next";
+import sessionOptions from "../config/session";
+import fetchArtists from '../config/db/controllers/fetchArtists';
 
-export default function LoginArtists() {
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req }) {
+    const artist = req.session.artist;
+    const props = {};
+    if (artist) {
+      props.artist = req.session.artist;
+    }
+    return { props };
+  },
+  sessionOptions
+);
+
+export default function LoginArtists(props) {
   const router = useRouter();
+  console.log('artist:', props.artist);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const { setIsArtist, setIsUser, setIsLoggedIn } = useUserData();
+  const [isLoading, setIsLoading] = useState(false);
+  const { setIsArtist, setIsUser, setIsLoggedIn, setArtistId, artistIdNew } = useUserData();
 
-  async function handleLogin() {
+  useEffect(() => {
+    setIsUser(false);
+    setIsArtist(true);
+  }, []);
+
+  async function handleLogin(event) {
+    event.preventDefault();
+
     if (username && password) {
+      setIsLoading(true);
+
       try {
-        const response = await fetch('/api/auth/loginArtist', {
+        const action = 'loginArtist';
+        const response = await fetch(`/api/auth/${action}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            username,
-            password,
-          }),
+          body: JSON.stringify({ username, password }),
         });
 
-        if (response.status === 200) {
-          const data = await response.json();
-          const { username, isArtist, isUser } = data;
+        if (response.ok) {
+          const artistData = await fetchArtists();
+          const artistArray = artistData.data;
+          const artist = artistArray.find((artist) => artist.username === username);
+          const artistId = artist ? artist._id : null;
+
+          setArtistId(artistId);
+
+          console.log('artistIdNew' + artistIdNew)
+
+          cookie.set("token", JSON.stringify({ username, isUser: false, isArtist: true, isLoggedIn: true, artistIdNew }), { expires: 365 }); 
+          setIsLoggedIn(true); 
           setMessage('Login successful');
-          setIsArtist(true);
-          setIsUser(false);
-          setIsLoggedIn(true);
-          cookie.set('token', JSON.stringify({ username, isArtist, isUser, isLoggedIn: true }), { expires: 1 / 24 });
           router.push('/');
+        } else if (response.status === 400) {
+          const data = await response.json();
+          setMessage(data.message || 'Invalid credentials');
         } else {
-          setMessage('Login failed. Please check your username and password.');
+          setMessage('Login failed');
         }
       } catch (error) {
-        console.error('Error during login:', error);
-        setMessage('Login failed');
+        console.error('Login failed:', error);
+        setMessage('Login failed. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
-    } else {
-      setMessage('Please fill out all fields');
     }
   }
 
   return (
     <>
-      <div className="bg-black card">
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter username"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter password"
-        />
-        <button type="button" onClick={handleLogin}>
-          Login
-        </button>
-        {message && <p>{message}</p>}
-      </div>
+        <div className="bg-black card">
+            <form onSubmit={handleLogin}>
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter username"
+                    autoComplete="username"
+                    disabled={isLoading}
+                />
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    autoComplete="current-password"
+                    disabled={isLoading}
+                />
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? 'Logging in...' : 'Login'}
+                </button>
+            </form>
+            {message && <p>{message}</p>}
+        </div>
+
     </>
-  );
+);
 }

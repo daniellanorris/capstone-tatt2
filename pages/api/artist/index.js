@@ -1,7 +1,6 @@
 import dbConnect from '../../../config/db/utils/dbConnect'
 import Artist from '../../../models/Artist'
 import cookie from 'cookie'
-import bcrypt from 'bcrypt'
 
 dbConnect()
 
@@ -34,10 +33,7 @@ export default async (req, res) => {
       return res.status(400).json({ success: false, message: 'Username already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Creating a new artist with hashed password
-    const newArtist = await Artist.create({ username, password: hashedPassword, ...otherData });
+    const newArtist = await Artist.create({ username, password, ...otherData });
 
     if (!newArtist) {
       return res.status(400).json({ success: false, message: 'User creation failed' });

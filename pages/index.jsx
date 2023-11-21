@@ -3,10 +3,8 @@ import Link from 'next/link';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
 import GeoLocationData from '../components/geolocationData';
-import placeholder from 'public/placeholder.jpeg'
-
-
-//need to implement scrolling functionality with this react pkg https://www.npmjs.com/package/react-scroll
+import placeholder from 'public/placeholder.jpeg';
+import fetchUsers from '../config/db/controllers/fetchUsers';
 
 
 export default function Home() {
@@ -14,13 +12,29 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const { userId, setUserId, isLoggedIn, isUser, isArtist, setArtistId, artistIdNew } = useUserData();
+    const {
+        userId,
+        setUserId,
+        isLoggedIn,
+        isUser,
+        isArtist,
+        setArtistId,
+        artistIdNew,
+        setIsLoggedIn,
+        setIsUser,
+        setIsArtist,
+    } = useUserData();
+
+
+    console.log('beginning' + artistIdNew)
     const { geolocationData } = GeoLocationData();
     const { savedArtists, setSavedArtists } = useUserData();
     const [tattooStyle, setIsTattooStyle] = useState(false);
     const [selectedButtons, setSelectedButtons] = useState(false);
-    const [isDesktop, setIsDesktop] = useState(window.innerWidth > 750)
+    const [isDesktop, setIsDesktop] = useState(window.innerWidth > 750);
     const [selectedArtist, setSelectedArtist] = useState(null);
+    const [artistId, setArtistSelect] = useState('')
+
 
 
     useEffect(() => {
@@ -29,16 +43,26 @@ export default function Home() {
                 const token = cookie.get('token');
 
                 if (token) {
-                    const { username, userId, artistIdNew } = JSON.parse(token);
+                    const { username, userId, artistIdNew, isUser, isArtist } = JSON.parse(token);
+                    console.log(isArtist)
                     setUsername(username);
-                    setUserId(userId);
-                    setArtistId(artistIdNew);
-                    console.log('artistId is' + artistIdNew);
+
+                    if (isUser === true) {
+                        setIsUser(isUser);
+                        setUserId(userId);
+
+                    }
+                    if (isArtist === true) {
+                        setIsArtist(true)
+                        setArtistId(artistIdNew)
+                        console.log('afterwards' + artistIdNew)
+
+                    }
+
+
                 }
 
-
                 if (userId) {
-
                     const savedArtistsResponse = await fetch(`/api/user/${userId}/savedArtists`);
 
                     if (!savedArtistsResponse.ok) {
@@ -46,69 +70,90 @@ export default function Home() {
                     }
 
                     const savedArtistsData = await savedArtistsResponse.json();
-
-
                     setSavedArtists(savedArtistsData);
-
                     console.log('savedartists', savedArtistsData);
                 }
 
-                const [userResponse, artistResponse] = await Promise.all([
-                    fetch('/api/user'),
-                    fetch('/api/artist'),
-                ]);
-
-                if (!userResponse.ok || !artistResponse.ok) {
-                    throw new Error(`Failed to fetch user or artist data.`);
+                if (artistIdNew) {
+                    setIsArtist(true)
+                    setArtistSelect(artistId)
                 }
 
+                const userResponse = await fetch('/api/user');
+
+                if (!userResponse.ok) {
+                    throw new Error(`Failed to fetch user data. Status: ${userResponse.status}`);
+                }
 
                 const userData = await userResponse.json();
-                const artistData = await artistResponse.json();
-
-
-
-
-                setData(userData)
+                setData(userData);
 
                 if (Array.isArray(userData.data) && userData.data.length > 0) {
-                    console.log('artistData:', userData.data);
-
-
-                    // Access the first item's _id
-                    console.log('First artist _id:', userData.data[0]._id);
                 } else {
-                    console.log('No artist data available.');
+                    console.log('No user data available.');
                 }
 
+                const artistResponse = await fetch('/api/artist');
 
+                if (!artistResponse.ok) {
+                    throw new Error(`Failed to fetch artist data. Status: ${artistResponse.status}`);
+                }
+
+                const artistData = await artistResponse.json();
                 setData(artistData);
-                setSelectedArtist(artistData.data[0])
+                setIsLoggedIn(true);
+
+                if (artistData) {
+                    setSelectedArtist(artistData.data[0]);
+                    console.log(artistData.data[0])
+                }
 
                 if (Array.isArray(artistData.data) && artistData.data.length > 0) {
-                    console.log('artistData:', artistData.data);
 
-                    // Access the first item's _id
-                    console.log('First artist _id:', artistData.data[0]._id);
                 } else {
                     console.log('No artist data available.');
                 }
-
-
-
-
-
-
-
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError(error.message);
             }
         };
-
+        console.log('artistId check', artistIdNew)
         fetchData();
-    }, [setUserId]);
+    }, [userId, setUserId, setSavedArtists, isUser, isArtist, artistIdNew]);
 
+    useEffect(() => {
+        if (selectedArtist && typeof selectedArtist === 'object') {
+            console.log('Selected Artist ID:', selectedArtist._id);
+        } else {
+            console.log('No selected artist or not an object');
+        }
+    }, [selectedArtist]);
+
+    console.log('test' + artistIdNew)
+
+    useEffect(() => {
+        const users = fetchUsers();
+
+        if (users && users.data && users.data.length > 0) {
+          const userSavedArtists = users.data.find((user) => {
+            return user.data && user.data.savedArtists &&
+              user.data.savedArtists.length > 0 &&
+              user.data.savedArtists.every(artist => savedArtists.includes(artist));
+          });
+        
+          setSavedArtists(userSavedArtists);
+          console.log('savedartists'+ savedArtists)
+        } else {
+          console.error('Error fetching users or users data is empty');
+        }
+    }, [])
+
+
+    useEffect(() => {
+        console.log('testing use effect' + artistIdNew);
+
+    }, [artistIdNew]);
 
     const changeButtonColor = (buttonName) => {
         setSelectedButtons((prevState) => ({
@@ -140,8 +185,8 @@ export default function Home() {
                 console.log('Response:', res);
 
                 if (res.status === 201) {
-                    setSavedArtists((prevSavedArtists) => ({
-                        ...prevSavedArtists,
+                    setSavedArtists((savedArtists) => ({
+                        ...savedArtists,
                         [artistId]: true,
                     }));
                     setMessage('Artist added successfully');
@@ -178,6 +223,8 @@ export default function Home() {
         console.log(selectedArtist)
 
     };
+
+    console.log('testing' + artistIdNew)
 
     return (
 
@@ -305,44 +352,50 @@ export default function Home() {
                                         <div className="card mt-4 d-flex justify-content-end">
                                             <div className="col-9">
                                                 <ul style={{ padding: "0px" }}>
-                                                    <div className="card m-4 d-flex justify-content-end">
-                                                        <Link href="/artist/[artistId]" as={`/artist/${selectedArtist._id}`}>
-                                                            <h3 className="custom-card-header">
-                                                                {selectedArtist.firstname} {selectedArtist.lastname}
-                                                            </h3>
-                                                            <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                                <img src={selectedArtist.profilePicture ? selectedArtist.profilePicture : placeholder} width={100} height={100} alt={`${selectedArtist.firstname} ${selectedArtist.lastname}`} />
-                                                            </div>
-                                                            <p>@{selectedArtist.username}</p>
-                                                            <p>Location: {selectedArtist.location} </p>
-                                                            {selectedArtist.tattooStyle && selectedArtist.tattooStyle.length > 0 && (
-                                                                <div>
-                                                                    <p>Tattoo Styles:</p>
-                                                                    <ul>
-                                                                        {selectedArtist.tattooStyle.map((style, styleIndex) => (
-                                                                            <li key={styleIndex}>{style}</li>
-                                                                        ))}
-                                                                    </ul>
+                                                    {selectedArtist ? (
+                                                        <div className="card m-4 d-flex justify-content-end">
+                                                            <Link href="/artist/[artistId]" as={`/artist/${selectedArtist._id}`}>
+                                                                <h3 className="custom-card-header">
+                                                                    {selectedArtist.firstname} {selectedArtist.lastname}
+                                                                </h3>
+                                                                <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                                    <img src={selectedArtist.profilePicture ? selectedArtist.profilePicture : placeholder} width={100} height={100} alt={`${selectedArtist.firstname} ${selectedArtist.lastname}`} />
                                                                 </div>
-                                                            )}
-                                                        </Link>
-                                                        {isUser ? (
-                                                            <button
-                                                                style={{ width: "50%" }}
-                                                                className={`button ${savedArtists && savedArtists[selectedArtist._id] ? 'selected' : ''}`}
-                                                                onClick={() => saveArtist(selectedArtist._id, userId)}
-                                                            >
-                                                                {savedArtists && savedArtists[selectedArtist._id] ? 'Saved Artist' : 'Save Artist'}
-                                                            </button>
-                                                        ) : null}
-                                                    </div>
+                                                                <p>@{selectedArtist.username}</p>
+                                                                <p>Location: {selectedArtist.location} </p>
+                                                                {selectedArtist.tattooStyle && selectedArtist.tattooStyle.length > 0 && (
+                                                                    <div>
+                                                                        <p>Tattoo Styles:</p>
+                                                                        <ul>
+                                                                            {selectedArtist.tattooStyle.map((style, styleIndex) => (
+                                                                                <li key={styleIndex}>{style}</li>
+                                                                            ))}
+                                                                        </ul>
+                                                                    </div>
+                                                                )}
+                                                            </Link>
+
+                                                            {isUser ? (
+                                                                <button
+                                                                    style={{ width: "50%" }}
+                                                                    className={`button ${savedArtists && savedArtists[selectedArtist._id] ? 'selected' : ''}`}
+                                                                    onClick={() => saveArtist(selectedArtist._id, userId)}
+                                                                >
+                                                                    {savedArtists && savedArtists[selectedArtist._id] ? 'Saved Artist' : 'Save Artist'}
+                                                                </button>
+                                                            ) : null}
+                                                        </div>
+                                                    ) : (
+                                                        null
+
+                                                    )}
 
                                                 </ul>
                                             </div>
                                         </div>
                                         <div className="card m-4 d-flex justify-content-end">
                                             <div className="row">
-                                                {Object.values(selectedArtist.image).map((imageUrl, index) => (
+                                                {selectedArtist && selectedArtist.image && Object.values(selectedArtist.image).map((imageUrl, index) => (
                                                     <div key={index} className="col-lg m-3">
                                                         <div className="card image-container">
                                                             <img src={imageUrl} alt={`Image ${index}`} className="card-img-top img-fluid" />
@@ -351,7 +404,7 @@ export default function Home() {
                                                 ))}
                                             </div>
                                         </div>
-                                       
+
 
 
                                     </div>
