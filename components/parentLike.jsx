@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import LikeButton from './LikeButton';
+import LikeButton from './likeButton';
 
 export default function ArtistDetails({ artistId, userId }) {
   const [likes, setLikes] = useState(0);
