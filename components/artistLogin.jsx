@@ -80,6 +80,7 @@ export default function LoginArtists(props) {
   return (
     <>
         <div className="bg-black card">
+        <h2 style={{color: "white"}}> Artist Login </h2>
             <form onSubmit={handleLogin}>
                 <input
                     type="text"

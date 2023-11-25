@@ -100,6 +100,7 @@ export default function Login(props) {
     return (
         <>
             <div className="bg-black card">
+                <h2 style={{color: "white"}}> User Login </h2>
                 <form onSubmit={handleLogin}>
                     <input
                         type="text"
@@ -123,10 +124,6 @@ export default function Login(props) {
                 </form>
                 {message && <p>{message}</p>}
             </div>
-            <div>
-                <p> <a href="/login">Logging in instead? Click here </a></p>
-            </div>
-
         </>
     );
 }

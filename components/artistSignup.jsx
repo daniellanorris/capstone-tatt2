@@ -74,6 +74,7 @@ export default function SignupArtists() {
   return (
     <>
       <div className="bg-black card">
+      <h2 style={{color: "white"}}> Artist Signup </h2>
         <input
           type="text"
           value={username}
