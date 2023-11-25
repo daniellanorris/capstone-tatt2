@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useUserData } from '../../context/userContext';
-import { useRouter } from 'next/router';
+import { useRouter, Link } from 'next/router';
+
 
 
 export default function ArtistPage() {
@@ -48,6 +49,9 @@ const { artistId } = router.query;
   return (
     <div style={{ width: 'auto', height: '100vw' }}>
       <h1>Profile</h1>
+      <a href={`/artist/${artistId}/profile`}>
+    <button > Edit profile </button> 
+    </a>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
