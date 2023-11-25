@@ -45,25 +45,10 @@ export default async (req, res) => {
       }
       break;
 
-    case 'PUT':
-      try {
-        const { savedArtistId } = body;
-        const result = await updateSavedArtist(savedArtistId, body);
-
-        if (result.success) {
-          res.status(200).json({ success: true, message: result.message });
-        } else {
-          res.status(404).json({ success: false, message: result.message });
-        }
-      } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-      }
-      break;
-
       case 'DELETE':
         try {
           const { artistId } = req.body;
-          const result = await deleteSavedArtist(userId, artistId); 
+          const result = await deleteSavedArtist(artistId); 
       
           if (result.success) {
             res.status(200).json({ success: true, message: result.message });

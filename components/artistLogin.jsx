@@ -52,9 +52,9 @@ export default function LoginArtists(props) {
           const artistData = await fetchArtists();
           const artistArray = artistData.data;
           const artist = artistArray.find((artist) => artist.username === username);
-          const artistId = artist ? artist._id : null;
+          const artistIdNew = artist ? artist._id : null;
 
-          setArtistId(artistId);
+          setArtistId(artistIdNew);
 
           console.log('artistIdNew' + artistIdNew)
 

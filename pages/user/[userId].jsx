@@ -57,10 +57,12 @@ export default function UserProfile() {
     return (
         <div className="container">
           <h1 className="text-left mt-4">User Profile</h1>
-    
+
           <div className="row mt-4">
+            
             <div className="col-md-6">
               <div className="card">
+              <h2> Upload Profile Picture</h2>
                 <UserImageUploadForm />
               </div>
             </div>

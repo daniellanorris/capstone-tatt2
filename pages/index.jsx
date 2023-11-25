@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
 import GeoLocationData from '../components/geolocationData';
-import placeholder from 'public/placeholder.jpeg';
-import fetchUsers from '../config/db/controllers/fetchUsers';
-
+import ArtistDetails from '../components/parentLike';
+import { calculateDistance } from '../config/db/controllers/findDistance';
 
 export default function Home() {
-    const [data, setData] = useState(null);
+    const [userData, setUser] = useState(null);
+    const [artistData, setArtistData] = useState({ data: [] });
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
+
     const {
         userId,
         setUserId,
@@ -23,19 +24,75 @@ export default function Home() {
         setIsLoggedIn,
         setIsUser,
         setIsArtist,
+        savedArtists,
+        setSavedArtists,
+        userLat,
+        userLon,
+        setUserData
     } = useUserData();
 
+    console.log('beginning saved artists' + savedArtists);
+    console.log(artistData)
+    console.log(userLat, userLon)
 
-    console.log('beginning' + artistIdNew)
+    console.log('beginning' + artistIdNew);
     const { geolocationData } = GeoLocationData();
-    const { savedArtists, setSavedArtists } = useUserData();
+
+const updateArtistData = (geolocationData) => {
+    if (geolocationData && geolocationData.address) {
+        const lat = geolocationData.address.latitude;
+        const lon = geolocationData.address.longitude;
+
+
+        return { lat, lon };
+    }
+
+
+    return { lat: null, lon: null };
+};
+
+// ...
+
+useEffect(() => {
+    const { lat, lon } = updateArtistData(geolocationData);
+
+    if (lat !== null && lon !== null) {
+        setUserData(lat, lon);
+        console.log('lat and lon', lat, lon);
+    }
+}, [geolocationData]);
+
+const artistsWithDistance = useMemo(() => {
+    if (artistData && artistData.data && geolocationData && geolocationData.address) {
+        return artistData.data.map((artist) => {
+            let artistLat = null;
+            let artistLon = null;
+
+
+            if (artist.location) {
+                const locationArray = artist.location.split(',');
+                artistLat = locationArray[0];
+                artistLon = locationArray[1];
+            }
+
+            const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
+            const distance2 = Math.round(distance)
+            console.log('artist lat and long', artistLat, artistLon);
+
+            return { ...artist, distance2 };
+        });
+    }
+    return [];
+}, [artistData, geolocationData, userLat, userLon]);
+
+    console.log(geolocationData);
     const [tattooStyle, setIsTattooStyle] = useState(false);
     const [selectedButtons, setSelectedButtons] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth > 750);
     const [selectedArtist, setSelectedArtist] = useState(null);
-    const [artistId, setArtistSelect] = useState('')
-
-
+    const [artistId, setArtistSelect] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [isArtistSaved, setIsArtistSaved] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,39 +101,23 @@ export default function Home() {
 
                 if (token) {
                     const { username, userId, artistIdNew, isUser, isArtist } = JSON.parse(token);
-                    console.log(isArtist)
+                    console.log(isArtist);
                     setUsername(username);
 
                     if (isUser === true) {
                         setIsUser(isUser);
                         setUserId(userId);
-
                     }
                     if (isArtist === true) {
-                        setIsArtist(true)
-                        setArtistId(artistIdNew)
-                        console.log('afterwards' + artistIdNew)
-
+                        setIsArtist(true);
+                        setArtistId(artistIdNew);
+                        console.log('afterwards' + artistIdNew);
                     }
-
-
-                }
-
-                if (userId) {
-                    const savedArtistsResponse = await fetch(`/api/user/${userId}/savedArtists`);
-
-                    if (!savedArtistsResponse.ok) {
-                        throw new Error(`Failed to fetch saved artists data. Status: ${savedArtistsResponse.status}`);
-                    }
-
-                    const savedArtistsData = await savedArtistsResponse.json();
-                    setSavedArtists(savedArtistsData);
-                    console.log('savedartists', savedArtistsData);
                 }
 
                 if (artistIdNew) {
-                    setIsArtist(true)
-                    setArtistSelect(artistId)
+                    setIsArtist(true);
+                    setArtistSelect(artistId);
                 }
 
                 const userResponse = await fetch('/api/user');
@@ -85,14 +126,14 @@ export default function Home() {
                     throw new Error(`Failed to fetch user data. Status: ${userResponse.status}`);
                 }
 
-                const userData = await userResponse.json();
-                setData(userData);
+                const userData2 = await userResponse.json();
+                setUser(userData2);
 
-                if (Array.isArray(userData.data) && userData.data.length > 0) {
+                if (Array.isArray(userData2.data) && userData2.data.length > 0) {
                 } else {
                     console.log('No user data available.');
                 }
-
+                console.log('user data', userData2)
                 const artistResponse = await fetch('/api/artist');
 
                 if (!artistResponse.ok) {
@@ -100,27 +141,36 @@ export default function Home() {
                 }
 
                 const artistData = await artistResponse.json();
-                setData(artistData);
+                setArtistData(artistData);
                 setIsLoggedIn(true);
 
                 if (artistData) {
                     setSelectedArtist(artistData.data[0]);
-                    console.log(artistData.data[0])
+                    console.log(artistData.data[0]);
                 }
 
                 if (Array.isArray(artistData.data) && artistData.data.length > 0) {
-
                 } else {
                     console.log('No artist data available.');
+                }
+
+                setLoading(false);
+
+                if (loading) {
+                    return <p>Loading...</p>;
+                }
+
+                if (error) {
+                    return <p>Error: {error}</p>;
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError(error.message);
             }
         };
-        console.log('artistId check', artistIdNew)
+        console.log('artistId check', artistIdNew);
         fetchData();
-    }, [userId, setUserId, setSavedArtists, isUser, isArtist, artistIdNew]);
+    }, [userId, setUserId, isUser, isArtist, artistIdNew]);
 
     useEffect(() => {
         if (selectedArtist && typeof selectedArtist === 'object') {
@@ -130,29 +180,8 @@ export default function Home() {
         }
     }, [selectedArtist]);
 
-    console.log('test' + artistIdNew)
-
-    useEffect(() => {
-        const users = fetchUsers();
-
-        if (users && users.data && users.data.length > 0) {
-          const userSavedArtists = users.data.find((user) => {
-            return user.data && user.data.savedArtists &&
-              user.data.savedArtists.length > 0 &&
-              user.data.savedArtists.every(artist => savedArtists.includes(artist));
-          });
-        
-          setSavedArtists(userSavedArtists);
-          console.log('savedartists'+ savedArtists)
-        } else {
-          console.error('Error fetching users or users data is empty');
-        }
-    }, [])
-
-
     useEffect(() => {
         console.log('testing use effect' + artistIdNew);
-
     }, [artistIdNew]);
 
     const changeButtonColor = (buttonName) => {
@@ -162,17 +191,65 @@ export default function Home() {
         }));
     };
 
-    async function saveArtist(artistId, userId) {
-        console.log('saveArtist function called');
-        console.log('artistId:', artistId);
-        console.log('userId:', userId);
+    async function tattooStyles() {
+        setIsTattooStyle((prevState) => !prevState);
+    }
 
+    async function setSize() {
+        setIsDesktop(window.innerWidth > 750);
+    }
+
+    useEffect(() => {
+        window.addEventListener('resize', setSize);
+        return () => window.removeEventListener('resize', setSize);
+    });
+
+    const setArtist = (index) => {
+        setSelectedArtist(artistData.data[index]);
+    };
+
+    useEffect(() => {
+        console.log(selectedArtist);
+    }, [selectedArtist]);
+
+    const [artistStates, setArtistStates] = useState({});
+
+    useEffect(() => {
+        if (selectedArtist) {
+            const artistId = selectedArtist._id;
+            const isSaved = savedArtists.some(
+                (artistGroup) =>
+                    artistGroup.data &&
+                    Array.isArray(artistGroup.data) &&
+                    artistGroup.data.some((item) => item._id === artistId)
+            );
+
+            setArtistStates((prevStates) => ({
+                ...prevStates,
+                [artistId]: isSaved,
+            }));
+        }
+    }, [selectedArtist, savedArtists]);
+
+    const saveArtist = async (artistId, userId) => {
         try {
-            // Check if the artist is already saved
-            if (savedArtists && savedArtists[artistId]) {
-                console.log('Artist is already saved');
-                setMessage('Artist is already saved');
-            } else {
+            const isSaved = artistStates[artistId];
+
+            if (!isSaved) {
+                console.log(savedArtists);
+                const isArtistSaved = savedArtists.some(
+                    (artist) =>
+                        artist.data &&
+                        Array.isArray(artist.data) &&
+                        artist.data.some((item) => item._id === artistId)
+                );
+
+                console.log('isArtistSaved', isArtistSaved);
+                setArtistStates((prevStates) => ({
+                    ...prevStates,
+                    [artistId]: true,
+                }));
+
                 console.log('Saving artist...');
                 const res = await fetch(`/api/user/${userId}/savedArtists`, {
                     method: 'POST',
@@ -182,53 +259,35 @@ export default function Home() {
                     body: JSON.stringify({ artistId, userId }),
                 });
 
-                console.log('Response:', res);
-
                 if (res.status === 201) {
-                    setSavedArtists((savedArtists) => ({
-                        ...savedArtists,
-                        [artistId]: true,
-                    }));
-                    setMessage('Artist added successfully');
+                    setSavedArtists((prevSavedArtists) => [
+                        ...prevSavedArtists,
+                        { artistId, userId },
+                    ]);
+
                     console.log('Artist added successfully');
+                    setMessage('Artist added successfully');
+                    setIsArtistSaved(true);
                 } else {
                     console.error('Failed to save artist');
                     setMessage('Failed to save artist');
-                    console.log('Failed to save artist');
                 }
+            } else {
+                console.log('Artist is already saved');
             }
         } catch (error) {
             console.error('Error saving artist:', error);
             setMessage('Error saving artist');
         }
-    }
-
-
-    async function tattooStyles() {
-        setIsTattooStyle((prevState) => !prevState);
-    }
-
-    async function setSize() {
-        setIsDesktop(window.innerWidth > 750)
-
-    }
-
-    useEffect(() => {
-        window.addEventListener("resize", setSize)
-        return () => window.removeEventListener("resize", setSize)
-    });
-
-    const setArtist = (index) => {
-        setSelectedArtist(data.data[index]);
-        console.log(selectedArtist)
-
     };
 
-    console.log('testing' + artistIdNew)
+    console.log('testing' + artistIdNew);
+    console.log('goelocation data' + geolocationData?.address.city)
+    console.log('geolocation data' + geolocationData?.address.state)
+    console.log
 
     return (
-
-        <div style={{ marginLeft: "10px" }}>
+        <div style={{ marginLeft: '10px' }}>
             {isLoggedIn ? (
                 <div>
                     <h1>Home</h1>
@@ -240,11 +299,11 @@ export default function Home() {
                     )}
                     <div>
                         Hey friend! It looks like you are in {geolocationData?.address?.city},{' '}
-                        {geolocationData?.address?.state} at area code {geolocationData?.address?.postalCode}. Here's a list of
+                        {geolocationData?.address?.state}. Here's a list of
                         artists that are near you!
                     </div>
 
-                    <div class="container" style={{ marginTop: "20px", marginBottom: "20px" }}>
+                    <div class="container" style={{ marginTop: '20px', marginBottom: '20px' }}>
                         <div class="row">
                             <div class="col-12 d-flex align-items-center justify-content-center">
                                 <button
@@ -259,7 +318,6 @@ export default function Home() {
                                     Filter By # of Likes
                                 </button>
                                 <button
-
                                     className={selectedButtons['tattoostyle'] ? 'selected' : ''}
                                     onClick={() => {
                                         tattooStyles();
@@ -300,11 +358,9 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
-
-                    {data && data.data && (
+                    {artistData && artistData.data && (
                         isDesktop ? (
                             <div className="container">
                                 <div className="row">
@@ -313,38 +369,47 @@ export default function Home() {
                                         {error ? (
                                             <p>Error fetching artists: {error}</p>
                                         ) : (
-                                            <ul style={{ padding: "0px" }}>
-                                                {data.data.map((item, index) => (
-                                                    <div key={index} onClick={() => setArtist(index)} className="card mt-4 d-flex justify-content-end">
-                                                        <h3 className="custom-card-header">
-                                                            {item.firstname} {item.lastname}
-                                                        </h3>
-                                                        <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                            <img src={item.profilePicture ? item.profilePicture : placeholder} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
-                                                        </div>
-                                                        <p>@{item.username}</p>
-                                                        <p>Location: {item.location} </p>
-                                                        {item.tattooStyle && item.tattooStyle.length > 0 && (
-                                                            <div>
-                                                                <p>Tattoo Styles:</p>
-                                                                <ul>
-                                                                    {item.tattooStyle.map((style, styleIndex) => (
-                                                                        <li key={styleIndex}>{style}</li>
-                                                                    ))}
-                                                                </ul>
+                                            <ul style={{ padding: '0px' }}>
+                                                {artistsWithDistance.map((item, index) => {
+
+                                             
+
+                                                    return (
+                                                        <div key={index} onClick={() => setArtist(index)} className="card mt-4 d-flex justify-content-end">
+                                                            <h3 className="custom-card-header">
+                                                                {item.firstname} {item.lastname}
+                                                            </h3>
+
+                                                            <div style={{ borderRadius: '50%', border: '8px solid orange', overflow: 'hidden', width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                                <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
                                                             </div>
-                                                        )}
-                                                        {isUser ? (
-                                                            <button
-                                                                style={{ width: "50%" }}
-                                                                className={`button ${savedArtists && savedArtists[item._id] ? 'selected' : ''}`}
-                                                                onClick={() => saveArtist(item._id, userId)}
-                                                            >
-                                                                {savedArtists && savedArtists[item._id] ? 'Saved Artist' : 'Save Artist'}
-                                                            </button>
-                                                        ) : null}
-                                                    </div>
-                                                ))}
+                                                            <p>@{item.username}</p>
+                                                       
+                                                            <p>Distance: {item.distance2} miles </p>
+                                                       
+                                                            {item.tattooStyle && item.tattooStyle.length > 0 && (
+                                                                <div>
+                                                                    <p>Tattoo Styles:</p>
+                                                                    <ul>
+                                                                        {item.tattooStyle.map((style, styleIndex) => (
+                                                                            <li key={styleIndex}>{style}</li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                            {isUser ? (
+                                                                <button
+                                                                    style={{ width: '50%' }}
+                                                                    className={`button ${savedArtists && savedArtists[item._id] ? 'selected' : ''}`}
+                                                                    onClick={() => { setArtist(item._id), saveArtist(item._id, userId) }}
+                                                                >
+                                                                    {savedArtists && savedArtists[item._id] ? 'Saved Artist' : 'Save Artist'}
+                                                                </button>
+                                                            ) : null}
+                                                        </div>
+                                                    );
+                                                    
+                                                })}
                                             </ul>
                                         )}
                                     </div>
@@ -352,6 +417,7 @@ export default function Home() {
                                         <div className="card mt-4 d-flex justify-content-end">
                                             <div className="col-9">
                                                 <ul style={{ padding: "0px" }}>
+
                                                     {selectedArtist ? (
                                                         <div className="card m-4 d-flex justify-content-end">
                                                             <Link href="/artist/[artistId]" as={`/artist/${selectedArtist._id}`}>
@@ -359,10 +425,13 @@ export default function Home() {
                                                                     {selectedArtist.firstname} {selectedArtist.lastname}
                                                                 </h3>
                                                                 <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                                    <img src={selectedArtist.profilePicture ? selectedArtist.profilePicture : placeholder} width={100} height={100} alt={`${selectedArtist.firstname} ${selectedArtist.lastname}`} />
+                                                                    <img src={selectedArtist.profilePicture ? selectedArtist.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${selectedArtist.firstname} ${selectedArtist.lastname}`} />
+                                                                </div>
+                                                                <div className="col-4">
+                                                                    <ArtistDetails artistId={selectedArtist._id} userId={userId} />
                                                                 </div>
                                                                 <p>@{selectedArtist.username}</p>
-                                                                <p>Location: {selectedArtist.location} </p>
+                                                                <p>Distance: {selectedArtist.distance} miles </p>
                                                                 {selectedArtist.tattooStyle && selectedArtist.tattooStyle.length > 0 && (
                                                                     <div>
                                                                         <p>Tattoo Styles:</p>
@@ -410,6 +479,7 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
+
                         ) : (
                             <div className="container">
                                 <div className="row">
@@ -419,17 +489,21 @@ export default function Home() {
                                             <p>Error fetching artists: {error}</p>
                                         ) : (
                                             <ul style={{ padding: "0px" }}>
-                                                {data.data.map((item, index) => (
+                                                {artistData.data.map((item, index) => (
                                                     <div key={index} className="card m-4 d-flex justify-content-end">
                                                         <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
                                                             <h3 className="custom-card-header">
                                                                 {item.firstname} {item.lastname}
                                                             </h3>
-                                                            <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                                <img src={item.profilePicture ? item.profilePicture : placeholder} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
+                                                            <div className="container column">
+                                                                <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                                    <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
+
+                                                                </div>
+
                                                             </div>
                                                             <p>@{item.username}</p>
-                                                            <p>Location: {item.location} </p>
+                                                            <p>Distance: {item.distance} miles </p>
                                                             {item.tattooStyle && item.tattooStyle.length > 0 && (
                                                                 <div>
                                                                     <p>Tattoo Styles:</p>
@@ -444,10 +518,10 @@ export default function Home() {
                                                         {isUser ? (
                                                             <button
                                                                 style={{ width: "50%" }}
-                                                                className={`button ${savedArtists && savedArtists[item._id] ? 'selected' : ''}`}
+                                                                className={`button ${isArtistSaved ? 'selected' : ''}`}
                                                                 onClick={() => saveArtist(item._id, userId)}
                                                             >
-                                                                {savedArtists && savedArtists[item._id] ? 'Saved Artist' : 'Save Artist'}
+                                                                {isArtistSaved === true ? 'Saved Artist' : 'Save Artist'}
                                                             </button>
                                                         ) : null}
                                                     </div>

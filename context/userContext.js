@@ -15,6 +15,14 @@ export const UserContextProvider = ({ children }) => {
   const [profileData, setProfileData] = useState(null);
   const [artistProfileData, setArtistProfileData] = useState(null)
   const [tattooStyles, setTattooStyles] = useState([])
+  const [userLat, setUserLat] = useState(null);
+  const [userLon, setUserLon] = useState(null);
+
+  const setUserData = (lat, lon) => {
+    setUserLat(lat);
+    setUserLon(lon);
+  };
+
 
 
   useEffect(() => {
@@ -22,16 +30,16 @@ export const UserContextProvider = ({ children }) => {
     if (token) {
      
       
-      const { userId, isUser, isArtist, isLoggedIn, artistIdNew, savedArtists } = JSON.parse(token);
+      const { userId, isUser, isArtist, isLoggedIn, artistIdNew} = JSON.parse(token);
       setUserId(userId);
-
-      setSavedArtists((savedArtistsArray) => savedArtistsArray || []);
       setIsLoggedIn(isLoggedIn);
+      console.log(artistIdNew)
 
 
-      if (isArtist === true) {
-        setIsArtist(true);
+      if (isArtist) {
+        setIsArtist(true)
         setArtistId(artistIdNew);
+
         console.log(artistIdNew)
         setTattooStyles(tattooStyles)
       }
@@ -48,6 +56,7 @@ export const UserContextProvider = ({ children }) => {
         if (result.success && typeof result.data === 'object') {
           const profileUrl = result.data.profileUrl;
 
+
           if (profileUrl) {
             setProfileData(profileUrl);
           } else {
@@ -60,20 +69,47 @@ export const UserContextProvider = ({ children }) => {
         console.error('Error fetching user data:', error);
       }
     };
+    const fetchSavedArtists = async () => {
+    try {
+        if (userId) {
+            const savedArtistsResponse = await fetch(`/api/user/${userId}/savedArtists`);
+
+            if (!savedArtistsResponse.ok) {
+                throw new Error(`Failed to fetch saved artists data. Status: ${savedArtistsResponse.status}`);
+            }
+
+            const savedArtistsData = await savedArtistsResponse.json();
+            console.log(savedArtistsData);
+
+            setSavedArtists((prevSavedArtists) => {
+                const newArray = Array.isArray(prevSavedArtists) ? [...prevSavedArtists] : [];
+                return newArray.concat(savedArtistsData);
+            });
+        }
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 
     if (userId) {
       fetchUserData();
+      fetchSavedArtists()
+      
     }
-  }, [setProfileData, userId]);
+  }, [setProfileData, userId, setSavedArtists]);
 
   useEffect(() => {
     const fetchArtistData = async () => {
+
       if (artistIdNew !== null) {
+      setArtistId(artistIdNew)
       try {
         console.log(artistIdNew)
         const response = await fetch(`/api/artist/${artistIdNew}/profile`);
         const result = await response.json();
         console.log('artistid from context'+ artistIdNew)
+
 
         if (result.success && typeof result.data === 'object') {
           const profileUrl = result.data.profilePicture;
@@ -127,7 +163,7 @@ export const UserContextProvider = ({ children }) => {
 
       fetchTattooStyles();
 
-  }, [setTattooStyles, artistIdNew]);
+  }, [setTattooStyles]);
 
   return (
     <UserContext.Provider
@@ -153,7 +189,11 @@ export const UserContextProvider = ({ children }) => {
         artistProfileData, 
         setArtistProfileData, 
         tattooStyles, 
-        setTattooStyles
+        setTattooStyles, 
+        userLat, 
+        userLon, 
+        setUserData
+
       }}
     >
       {children}

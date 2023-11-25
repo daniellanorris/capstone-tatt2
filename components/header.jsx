@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 import { Image, Navbar, Nav, Container } from 'react-bootstrap';
 
 export default function Header() {
-    const { userId, isArtist, isUser, isLoggedIn, artistIdNew, setArtistId, profileData, artistProfileData } = useUserData()
+    const { userId, isArtist, isUser, isLoggedIn, artistIdNew, profileData, artistProfileData } = useUserData()
     console.log('header', artistIdNew)
 
     useEffect(() => {

@@ -1,48 +1,57 @@
-import { useEffect, useState } from 'react';
-import {useUserData} from '../../context/userContext'
+import React, { useEffect, useState } from 'react';
+import { useUserData } from '../../context/userContext';
+import { useRouter } from 'next/router';
 
 
-export default function ArtistPage(req) {
+export default function ArtistPage() {
   const [artistData, setArtistData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const {setIsLoggedIn, setIsArtist, setArtistId, artistIdNew} = useUserData();
+  const [error, setError] = useState(null);
+  const { setIsLoggedIn, setIsArtist } = useUserData();
 
-  setIsLoggedIn(true)
-  setIsArtist(true)
-  console.log(artistIdNew)
+
+  const router = useRouter();
+const { artistId } = router.query;
 
   useEffect(() => {
+    setIsLoggedIn(true);
+    setIsArtist(true);
+  }, [setIsLoggedIn, setIsArtist]);
 
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        if (artistIdNew !== undefined && artistIdNew !== null) {
-          const response = await fetch(`/api/artist/${artistIdNew}`);
+        setLoading(true);
+
+        if (artistId != null) {
+          const response = await fetch(`/api/artist/${artistId}`);
           if (!response.ok) {
             throw new Error(`Failed to fetch data. Status: ${response.status}`);
           }
 
- 
           const artistData = await response.json();
           setArtistData(artistData);
-  
-
           console.log('Artist Data:', artistData);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-    console.log('Current artistId:', artistIdNew);
+
+    console.log('Current artistId:', artistId);
     fetchData();
-  }, [artistIdNew]);
+  }, [artistId]);
 
   return (
     <div style={{ width: 'auto', height: '100vw' }}>
       <h1>Profile</h1>
       {loading ? (
         <p>Loading...</p>
+      ) : error ? (
+        <p> Error: {error} </p> 
       ) : (
         <div className="row">
           <div className="col-md-4 mb-4">

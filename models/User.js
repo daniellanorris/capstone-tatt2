@@ -10,6 +10,7 @@ const savedArtistsSchema = new mongoose.Schema({
     artist: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist',
+        unique: true
     }
 });
 
@@ -40,7 +41,8 @@ const userSchema = new mongoose.Schema({
     savedArtists: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist', 
-        required: false
+        required: false, 
+        unique: [true, 'same artist cannot be saved twice']
     }], 
     profileUrl: {
         type: String

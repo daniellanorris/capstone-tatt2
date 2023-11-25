@@ -18,6 +18,7 @@ export default function SignupArtists() {
   const { setIsLoggedIn, isLoggedIn } = useUserData();
   const { setArtistId, artistIdNew } = useUserData();
 
+  
   const { geolocationData, error } = GeoLocationData();
 
   setIsUser(true); 
@@ -29,7 +30,7 @@ export default function SignupArtists() {
     }
   }, [geolocationData]);
 
-  async function handleValidation() {
+  async function handleValidation(res) {
     if (username && password && firstname && lastname && location) {
       try {
         const response = await fetch('/api/artist', {
@@ -53,6 +54,7 @@ export default function SignupArtists() {
           setArtistId(artistIdNew);
           setIsLoggedIn(true);
           cookie.set('token', JSON.stringify({ artistIdNew, username, isArtist: true, isUser: false }), { expires: 1 / 24 });
+          router.push('/')
         } else if (response.status === 400) {
           const data = await response.json();
           setMessage(data.message);

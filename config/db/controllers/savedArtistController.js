@@ -3,8 +3,8 @@ import Artist from '../../../models/Artist';
 
 
 export default async function saveArtistToUser() {
-const userId = User._id
-const artistId = Artist._id
+  const userId = User._id
+  const artistId = Artist._id
 
   try {
     const user = await User.findById(userId);
@@ -40,3 +40,27 @@ export async function deleteSavedArtist(userId, artistId) {
     return { success: false, error: error.message };
   }
 }
+
+// export async function checkSaved(userId, artistId) {
+//   try {
+//     const user = await User.findById(userId);
+
+//     const savedArtistsToUser = user.savedArtists
+
+//     if (!user) {
+//       return { success: false, message: 'User not found' };
+//     }
+
+
+//     const idCheck = savedArtistsToUser.find(artistId)
+//     console.log(idCheck)
+
+  
+
+   
+//   }
+//   catch (err) {
+//     console.log('failed getting user data')
+//   }
+
+// }
