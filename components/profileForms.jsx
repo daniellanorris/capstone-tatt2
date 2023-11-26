@@ -70,8 +70,6 @@ const ProfileUploadForm = () => {
 
   return (
     <div>
-      <h2>Change Your Profile Picture</h2>
-      <p>Select an image to update your profile picture!</p>
       <input type="file" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload Image</button>
       {artistProfileData && <img src={artistProfileData} alt="Uploaded Image" className="img-fluid mt-3" style={{ width: '100px' }} />}

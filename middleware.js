@@ -8,9 +8,9 @@ export async function middleware(req) {
 
   const { user, artist } = session;
 
-  // if (!user || !artist) {
-  //   return NextResponse.redirect(new URL('/login', req.url))
-  // }
+  if (!user || !artist) {
+    return NextResponse.redirect(new URL('/login', req.url))
+  }
 
   return res;
 }

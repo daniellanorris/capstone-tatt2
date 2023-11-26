@@ -8,7 +8,7 @@ export default function ArtistPage() {
   const [artistData, setArtistData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { setIsLoggedIn, setIsArtist } = useUserData();
+  const { setIsLoggedIn, setIsArtist, artistIdNew, isArtist } = useUserData();
 
 
   const router = useRouter();
@@ -49,9 +49,12 @@ const { artistId } = router.query;
   return (
     <div style={{ width: 'auto', height: '100vw' }}>
       <h1>Profile</h1>
+      {(artistIdNew == artistId) && isArtist ? (
       <a href={`/artist/${artistId}/profile`}>
+      
     <button > Edit profile </button> 
     </a>
+    ) :( null)}
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -86,7 +89,12 @@ const { artistId } = router.query;
           <div class="card">
   <h3>Profile Picture:</h3>
   {artistData && artistData.data && artistData.data.profilePicture && (
-    <img src={artistData.data.profilePicture} width="100px" height="auto" alt="Profile" />
+   
+   <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+   <img src={artistData.data.profilePicture} width={100} height={100} alt="profile" />
+
+</div>
+
   )}
 </div>
           </div>

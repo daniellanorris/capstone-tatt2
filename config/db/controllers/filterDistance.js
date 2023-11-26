@@ -29,6 +29,7 @@ export default function FilterDistance({ onFilterDistance }) {
         thumbClassName="customSlider-thumb"
         markClassName="customSlider-mark"
         marks={100}
+
       />
           <h3   value={sliderValue}> {sliderValue} miles </h3> 
     </div>

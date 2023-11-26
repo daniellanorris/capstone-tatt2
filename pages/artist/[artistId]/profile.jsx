@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import ImageUploadForm from '../../../components/imageForm';
 import { useUserData } from '../../../context/userContext';
 import ProfileUploadForm from '../../../components/profileForms';
+import { useRouter } from 'next/router'
 
 
 export default function ImageForm() {
+  const router = useRouter()
+  const { artistId } = router.query;
   const [imageData, setImageData] = useState(null);
   const [selectedStyles, setSelectedStyles] = useState([]);
   const { tattooStyles, setTattooStyles, artistIdNew, setArtistProfileData } = useUserData();
@@ -66,11 +69,15 @@ export default function ImageForm() {
     setTattooStyles(...tattooStyles, selectedStyles)
     console.log(tattooStyles)
   }
-
   return (
+    <>
+    {artistIdNew == artistId ? (
     <div style={{ backgroundImage: `url('/oranges.jpg')`, width: 'auto' }}>
       <ImageUploadForm />
       {imageData && <img src={imageData} alt="Artist Image" />}
+      
+      <h2>Change Your Profile Picture</h2>
+      <p>Select an image to update your profile picture!</p>
       <ProfileUploadForm />
       <div>
         <h2>Select your preferred tattoo styles</h2>
@@ -97,5 +104,9 @@ export default function ImageForm() {
         </div>
       </div>
     </div>
+  
+    ) :( <div> This is not your profile to edit </div>)}
+
+      </>
   );
 }

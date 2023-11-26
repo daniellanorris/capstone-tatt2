@@ -1,5 +1,5 @@
 
-import React, {useState, useEffect, useMemo} from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
@@ -15,6 +15,7 @@ export default function Home() {
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
     const [distanceFiltered, setDistance] = useState()
+    const [distanceSelect, setDistanceSelected] = useState(false)
 
     const {
         userId,
@@ -67,39 +68,39 @@ export default function Home() {
     const artistsWithDistance = useMemo(() => {
         if (artistData && artistData.data && geolocationData && geolocationData.address) {
             return artistData.data
-            .filter((artist) => {
-              let artistLat = null;
-              let artistLon = null;
-      
-              if (artist.location) {
-                const locationArray = artist.location.split(',');
-                artistLat = locationArray[0];
-                artistLon = locationArray[1];
-              }
-      
-              const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
-              const distance2 = Math.round(distance);
-      
-       
-              return distance2 <= distanceFiltered;
-            })
-            .map((artist) => {
-                let artistLat = null;
-                let artistLon = null;
+                .filter((artist) => {
+                    let artistLat = null;
+                    let artistLon = null;
+
+                    if (artist.location) {
+                        const locationArray = artist.location.split(',');
+                        artistLat = locationArray[0];
+                        artistLon = locationArray[1];
+                    }
+
+                    const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
+                    const distance2 = Math.round(distance);
 
 
-                if (artist.location) {
-                    const locationArray = artist.location.split(',');
-                    artistLat = locationArray[0];
-                    artistLon = locationArray[1];
-                }
+                    return distance2 <= distanceFiltered;
+                })
+                .map((artist) => {
+                    let artistLat = null;
+                    let artistLon = null;
 
-                const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
-                const distance2 = Math.round(distance)
-                console.log('artist lat and long', artistLat, artistLon);
 
-                return { ...artist, distance2 };
-            });
+                    if (artist.location) {
+                        const locationArray = artist.location.split(',');
+                        artistLat = locationArray[0];
+                        artistLon = locationArray[1];
+                    }
+
+                    const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
+                    const distance2 = Math.round(distance)
+                    console.log('artist lat and long', artistLat, artistLon);
+
+                    return { ...artist, distance2 };
+                });
         }
         return [];
     }, [artistData, geolocationData, userLat, userLon, distanceFiltered]);
@@ -224,7 +225,8 @@ export default function Home() {
     });
 
     const setArtist = (index) => {
-        setSelectedArtist(artistData.data[index]);
+        const selectedArtistInFiltered = artistsWithDistance[index];
+        setSelectedArtist(selectedArtistInFiltered);
     };
 
     useEffect(() => {
@@ -308,10 +310,41 @@ export default function Home() {
     const handleFilterDistance = (value) => {
         setDistance(value)
         console.log('Handling distance filter value:', value);
-  
-      };
+
+    };
+
+    const distances = () => {
+        if (distanceSelect === false) {
+            setDistanceSelected(true)
+            return
+        }
+        setDistanceSelected(false)
+
+
+    }
+
+    const [scrollPosition, setScrollPosition] = useState(0);
+
+useEffect(() => {
+  const handleScroll = () => {
+    setScrollPosition(window.scrollY);
+  };
+
+  window.addEventListener('scroll', handleScroll);
+
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+  };
+}, []);
+
+const cardPosition = scrollPosition > 480 ? 'fixed' : 'absolute';
+const cardTop = scrollPosition > 480 ? '50%' : '450px';
+const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translate(-50%, 0)';
+
+
+
     return (
-        <div style={{ marginLeft: '10px' }}>
+        <div sstyle={{ marginLeft: '10px', position: 'relative'}}>
             {isLoggedIn ? (
                 <div>
                     <h1>Home</h1>
@@ -332,7 +365,10 @@ export default function Home() {
                             <div class="col-12 d-flex align-items-center justify-content-center">
                                 <button
                                     className={selectedButtons['location'] ? 'selected' : ''}
-                                    onClick={() => changeButtonColor('location')}
+                                    onClick={() => {
+                                        changeButtonColor('location');
+                                        distances();
+                                    }}
                                 >
                                     {' '}
                                     Filter By Location{' '}
@@ -382,10 +418,13 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                        <FilterDistance onFilterDistance={handleFilterDistance}/>
+                        {distanceSelect === true ? (
+                            <FilterDistance onFilterDistance={handleFilterDistance}  />
+                        ) : (null)
+                        }
                     </div>
 
-                    {artistData && artistData.data && (
+                    {artistData && artistData.data && ( 
                         isDesktop ? (
                             <div className="container">
                                 <div className="row">
@@ -438,13 +477,14 @@ export default function Home() {
                                             </ul>
                                         )}
                                     </div>
-                                    <div className="col-7 mt-4 dark-card">
-                                        <div className="card mt-4 d-flex justify-content-end">
+                                    <div className="col-7 mt-4 dark-card" >
+                                    <div className="fixed-card" style={{ position: cardPosition, top: cardTop, left: '93%', transform: cardTransform, width: "100%"}}>
+                                        <div>
                                             <div className="col-9">
                                                 <ul style={{ padding: "0px" }}>
 
                                                     {selectedArtist ? (
-                                                        <div className="card m-4 d-flex justify-content-end">
+                                                        <div className={`card mt-4 d-flex justify-content-end`}>
                                                             <Link href="/artist/[artistId]" as={`/artist/${selectedArtist._id}`}>
                                                                 <h3 className="custom-card-header">
                                                                     {selectedArtist.firstname} {selectedArtist.lastname}
@@ -485,18 +525,24 @@ export default function Home() {
                                                     )}
 
                                                 </ul>
-                                            </div>
+                                          
                                         </div>
-                                        <div className="card m-4 d-flex justify-content-end">
-                                            <div className="row">
-                                                {selectedArtist && selectedArtist.image && Object.values(selectedArtist.image).map((imageUrl, index) => (
-                                                    <div key={index} className="col-lg m-3">
-                                                        <div className="card image-container">
-                                                            <img src={imageUrl} alt={`Image ${index}`} className="card-img-top img-fluid" />
+                                        {selectedArtist && selectedArtist.image && (
+                                            <div>
+                                                <div className="row imageContainer">
+                                                    {Object.values(selectedArtist.image).map((imageUrl, index) => (
+                                                        <div key={index} className="col-2 m-0">
+                                                            <img
+                                                                src={imageUrl}
+                                                                alt={`Image ${index}`}
+                                                                className="img-fluid"
+                                                            />
                                                         </div>
-                                                    </div>
-                                                ))}
+                                                    ))}
+                                                </div>
                                             </div>
+                                        )}
+                                        </div>
                                         </div>
 
 
