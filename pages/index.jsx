@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+
+import React, {useState, useEffect, useMemo} from 'react'
 import Link from 'next/link';
 import cookie from 'js-cookie';
 import { useUserData } from '../context/userContext';
 import GeoLocationData from '../components/geolocationData';
 import ArtistDetails from '../components/parentLike';
 import { calculateDistance } from '../config/db/controllers/findDistance';
+import FilterDistance from '../config/db/controllers/filterDistance'
 
 export default function Home() {
     const [userData, setUser] = useState(null);
@@ -12,6 +14,7 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
+    const [distanceFiltered, setDistance] = useState()
 
     const {
         userId,
@@ -38,52 +41,68 @@ export default function Home() {
     console.log('beginning' + artistIdNew);
     const { geolocationData } = GeoLocationData();
 
-const updateArtistData = (geolocationData) => {
-    if (geolocationData && geolocationData.address) {
-        const lat = geolocationData.address.latitude;
-        const lon = geolocationData.address.longitude;
+    const updateArtistData = (geolocationData) => {
+        if (geolocationData && geolocationData.address) {
+            const lat = geolocationData.address.latitude;
+            const lon = geolocationData.address.longitude;
 
 
-        return { lat, lon };
-    }
+            return { lat, lon };
+        }
 
 
-    return { lat: null, lon: null };
-};
-
-// ...
-
-useEffect(() => {
-    const { lat, lon } = updateArtistData(geolocationData);
-
-    if (lat !== null && lon !== null) {
-        setUserData(lat, lon);
-        console.log('lat and lon', lat, lon);
-    }
-}, [geolocationData]);
-
-const artistsWithDistance = useMemo(() => {
-    if (artistData && artistData.data && geolocationData && geolocationData.address) {
-        return artistData.data.map((artist) => {
-            let artistLat = null;
-            let artistLon = null;
+        return { lat: null, lon: null };
+    };
 
 
-            if (artist.location) {
+    useEffect(() => {
+        const { lat, lon } = updateArtistData(geolocationData);
+
+        if (lat !== null && lon !== null) {
+            setUserData(lat, lon);
+            console.log('lat and lon', lat, lon);
+        }
+    }, [geolocationData]);
+
+    const artistsWithDistance = useMemo(() => {
+        if (artistData && artistData.data && geolocationData && geolocationData.address) {
+            return artistData.data
+            .filter((artist) => {
+              let artistLat = null;
+              let artistLon = null;
+      
+              if (artist.location) {
                 const locationArray = artist.location.split(',');
                 artistLat = locationArray[0];
                 artistLon = locationArray[1];
-            }
+              }
+      
+              const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
+              const distance2 = Math.round(distance);
+      
+       
+              return distance2 <= distanceFiltered;
+            })
+            .map((artist) => {
+                let artistLat = null;
+                let artistLon = null;
 
-            const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
-            const distance2 = Math.round(distance)
-            console.log('artist lat and long', artistLat, artistLon);
 
-            return { ...artist, distance2 };
-        });
-    }
-    return [];
-}, [artistData, geolocationData, userLat, userLon]);
+                if (artist.location) {
+                    const locationArray = artist.location.split(',');
+                    artistLat = locationArray[0];
+                    artistLon = locationArray[1];
+                }
+
+                const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
+                const distance2 = Math.round(distance)
+                console.log('artist lat and long', artistLat, artistLon);
+
+                return { ...artist, distance2 };
+            });
+        }
+        return [];
+    }, [artistData, geolocationData, userLat, userLon, distanceFiltered]);
 
     console.log(geolocationData);
     const [tattooStyle, setIsTattooStyle] = useState(false);
@@ -286,6 +305,11 @@ const artistsWithDistance = useMemo(() => {
     console.log('geolocation data' + geolocationData?.address.state)
     console.log
 
+    const handleFilterDistance = (value) => {
+        setDistance(value)
+        console.log('Handling distance filter value:', value);
+  
+      };
     return (
         <div style={{ marginLeft: '10px' }}>
             {isLoggedIn ? (
@@ -358,6 +382,7 @@ const artistsWithDistance = useMemo(() => {
                                 </div>
                             </div>
                         </div>
+                        <FilterDistance onFilterDistance={handleFilterDistance}/>
                     </div>
 
                     {artistData && artistData.data && (
@@ -372,7 +397,7 @@ const artistsWithDistance = useMemo(() => {
                                             <ul style={{ padding: '0px' }}>
                                                 {artistsWithDistance.map((item, index) => {
 
-                                             
+
 
                                                     return (
                                                         <div key={index} onClick={() => setArtist(index)} className="card mt-4 d-flex justify-content-end">
@@ -384,9 +409,9 @@ const artistsWithDistance = useMemo(() => {
                                                                 <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
                                                             </div>
                                                             <p>@{item.username}</p>
-                                                       
+
                                                             <p>Distance: {item.distance2} miles </p>
-                                                       
+
                                                             {item.tattooStyle && item.tattooStyle.length > 0 && (
                                                                 <div>
                                                                     <p>Tattoo Styles:</p>
@@ -408,7 +433,7 @@ const artistsWithDistance = useMemo(() => {
                                                             ) : null}
                                                         </div>
                                                     );
-                                                    
+
                                                 })}
                                             </ul>
                                         )}

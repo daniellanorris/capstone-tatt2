@@ -42,7 +42,8 @@
     "react-native-radar": "^3.8.15",
     "react-native-s3": "^0.0.29",
     "react-native-video": "^5.2.1",
-    "react-router-dom": "^6.17.0"
+    "react-router-dom": "^6.17.0",
+    "react-slider": "^2.0.6"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"
