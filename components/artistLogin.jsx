@@ -20,7 +20,6 @@ export const getServerSideProps = withIronSessionSsr(
 
 export default function LoginArtists(props) {
   const router = useRouter();
-  console.log('artist:', props.artist);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -55,8 +54,6 @@ export default function LoginArtists(props) {
           const artistIdNew = artist ? artist._id : null;
 
           setArtistId(artistIdNew);
-
-          console.log('artistIdNew' + artistIdNew)
 
           cookie.set("token", JSON.stringify({ username, isUser: false, isArtist: true, isLoggedIn: true, artistIdNew }), { expires: 365 }); 
           setIsLoggedIn(true); 

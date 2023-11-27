@@ -52,8 +52,8 @@ export default function SignupUsers() {
     }
 
     return (
-        <div className="bg-white card">
-            <h2 style={{color: "white"}}> User Signup </h2>
+        <div className="bg-black card">
+        <h2 style={{color: "white"}}> User Signup </h2>
             <input
                 type="text"
                 value={username}

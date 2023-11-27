@@ -19,14 +19,11 @@ export default function GeoLocationData() {
           }
 
           if (result) {
-            console.log('IP Geocode Result:', result);
             setGeolocationData(result);
 
             const lat = result.address.latitude;
             const long = result.address.longitude;
             const location = { lat, long }; 
-            console.log('location', location)
-
 
             Radar.reverseGeocode(location, (err, resultReverse) => {
               if (err) {
@@ -36,7 +33,6 @@ export default function GeoLocationData() {
                 return;
               }
             
-              console.log('Reverse Geocode Result:', resultReverse);
             
               setGeolocationDataReverse(resultReverse);
         

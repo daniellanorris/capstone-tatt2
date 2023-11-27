@@ -75,7 +75,7 @@ export default function ImageForm() {
     <div style={{ backgroundImage: `url('/oranges.jpg')`, width: 'auto' }}>
       <ImageUploadForm />
       {imageData && <img src={imageData} alt="Artist Image" />}
-      
+
       <h2>Change Your Profile Picture</h2>
       <p>Select an image to update your profile picture!</p>
       <ProfileUploadForm />

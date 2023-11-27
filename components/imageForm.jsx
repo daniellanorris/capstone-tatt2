@@ -77,11 +77,11 @@ const ImageUploadForm = () => {
   
 
   return (
-    <div>
+    <div style={{maxWidth: "200px"}}>
       <h2>Image Upload</h2>
-      <input type="file" onChange={handleFileChange} />
+      <input type="file" onChange={handleFileChange} style={{maxWidth: "300px"}}/>
       <button onClick={handleUpload}>Upload Image</button>
-      {imageData && <img src={imageData} alt="Uploaded Image" width="500" height="auto"/>}
+      {imageData && <img src={imageData} alt="Uploaded Image" width="200px" height="auto"/>}
     </div>
   );
 };

@@ -55,7 +55,7 @@ export default function UserProfile() {
     }, [artistIdNew]);
 
     return (
-        <div className="container">
+        <div className="container" style={{paddingBottom: "100px"}}>
           <h1 className="text-left mt-4">User Profile</h1>
 
           <div className="row mt-4">

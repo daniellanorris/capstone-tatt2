@@ -1,5 +1,7 @@
 import { UserContextProvider } from '../context/userContext';
-import Footer from '../components/footer';
+
+const Footer = React.lazy(() => import('../components/footer'));
+
 import Header from '../components/header';
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { useState, useEffect } from 'react';
@@ -12,7 +14,7 @@ function MyApp({ Component, pageProps }) {
 
     const fetchData = async () => {
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       setLoading(false); 
     };
 
@@ -20,18 +22,25 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
+    <div>
     <UserContextProvider>
+      <div>
       <Header />
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <h3>
           Loading...
+          </h3>
         </div>
       ) : (
-        <Component {...pageProps} />
+        <><Component {...pageProps} />   <Footer/></>
       )}
-      <Footer />
+      </div>
+
     </UserContextProvider>
+    </div>
   );
+
 }
 
 export default MyApp;

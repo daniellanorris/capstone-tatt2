@@ -49,7 +49,6 @@ export default function SignupArtists() {
 
         if (response.status === 201) {
           const data = await response.json();
-          console.log('data from server:', data);
           const artistIdNew = data.data; 
           setArtistId(artistIdNew);
           setIsLoggedIn(true);

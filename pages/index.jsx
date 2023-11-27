@@ -341,7 +341,7 @@ export default function Home() {
     console.log(scrollPosition)
     const cardWidthPercentage = '100%'
     const cardPosition = scrollPosition > 480 ? 'fixed' : 'relative';
-    const cardTop = scrollPosition > 480 ? '45%' : '200px';
+    const cardTop = scrollPosition > 480 ? '50%' : '350px';
     const cardTransform = scrollPosition > 480 ? 'translate(0%, -70%)' : 'translate(0%, -70%)';
 
 
@@ -443,7 +443,7 @@ export default function Home() {
 
 
                                                     return (
-                                                        <div key={index} onClick={() => setArtist(index)} className="card mt-4 d-flex justify-content-end">
+                                                        <div key={index} onClick={() => setArtist(index)} className={`mt-4 d-flex justify-content-end ${(selectedArtist._id === item._id )? 'card-selected card' : 'card '}`}>
                                                             <h3 className="custom-card-header">
                                                                 {item.firstname} {item.lastname}
                                                             </h3>
@@ -483,13 +483,13 @@ export default function Home() {
                                         )}
                                     </div>
                                     <div className="col-7 mt-4 dark-card container" style={{ maxWidth: '100vw', position: "relative" }}>
-                                        <div style={{ position: cardPosition, top: cardTop, transform: cardTransform, width: cardWidthPercentage }}>
+                                        <div style={{ position: cardPosition, top: cardTop, transform: cardTransform, width: '100%', maxHeight: 'calc(100vh - 100px)', overflowY: 'auto' }}>
                                             <div>
                                                 <div className="col-9" style={{ width: '100%', zIndex: '100' }}>
                                                     <ul style={{ padding: "0px" }}>
 
                                                         {selectedArtist ? (
-                                                            <div className={`card mt-4 d-flex justify-content-end `} style={{ width: '100%' }}>
+                                                            <div className={`card mt-4 d-flex justify-content-end`} style={{ width: '100%' }}>
                                                                 <Link href="/artist/[artistId]" as={`/artist/${selectedArtist._id}`}>
                                                                     <h3 className="custom-card-header">
                                                                         {selectedArtist.firstname} {selectedArtist.lastname}
@@ -512,23 +512,18 @@ export default function Home() {
                                                                             </ul>
                                                                         </div>
                                                                     )}
-                                                                    <div className="container">
-
                                                                     <div className="mt-4 d-flex">
-                                                                        <div className="row ">
+                                                                        <div className="row">
                                                                             {Object.values(selectedArtist.image).map((imageUrl, index) => (
-                                                                                <div key={index} className="col-2 m-0">
+                                                                                <div key={index} className="col-2 m-2">
                                                                                     <img
                                                                                         src={imageUrl}
                                                                                         alt={`Image ${index}`}
                                                                                         className="img-fluid smaller-image"
-
-
                                                                                     />
                                                                                 </div>
                                                                             ))}
                                                                         </div>
-                                                                    </div>
                                                                     </div>
 
                                                                 </Link>

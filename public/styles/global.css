@@ -18,6 +18,17 @@ html, body {
     flex-direction: column;
     display: flex;
   }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    opacity: 0.25;
+  }
   
   #root {
     display: flex;
@@ -27,11 +38,15 @@ html, body {
   
 
   .footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    padding-bottom: 20px;
+    width: 100%;
     text-align: center;
-  margin-top: 300px;
-    width: 100vw;
+    margin-top: "20px";
     background-color: orange;
-  }
+}
 
   .card {
       background-color: #fff;
@@ -40,16 +55,15 @@ html, body {
 
   }
   .card-selected {
-    border: green solid 8px;
-    background-color: #fff;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: green solid 20px;
+    border-radius: 20px;
+   
 
   }
 
   .dark-card {
     background-color: rgba(0, 0, 0, 0.5); /* rgba(0, 0, 0, 0.5) represents black with 50% opacity */
-    padding: 20px;
+    padding: 0px;
     border-radius: 10px;
     color: white;
   }
@@ -135,4 +149,24 @@ h3 {
   position: fixed;
   transition: top .5s ease;
 
+}
+
+.mt-4.d-flex .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mt-4.d-flex .col-2 {
+  flex: 0 0 calc(20% - 1rem); 
+  margin: 0.5rem;
+}
+
+.img-fluid {
+  max-width: 100px;
+  height: auto;
+}
+
+.smaller-image {
+  height: auto;
+  margin: 2px;
 }

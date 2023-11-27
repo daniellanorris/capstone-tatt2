@@ -10,6 +10,7 @@ export default function Login() {
 
     return (
         <div className="justify-content-center align-content-center" style={{ minHeight: '100vh' }}>
+    
             <div>
                 <button onClick={() => { setUser(true); setArtist(false); }}>User Login</button>
                 <button onClick={() => { setUser(false); setArtist(true); }}>Artist Login</button>
