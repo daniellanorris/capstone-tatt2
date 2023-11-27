@@ -3,7 +3,7 @@ import ReactSlider from 'react-slider';
 import '../../../public/styles/slider.css'; 
 
 export default function FilterDistance({ onFilterDistance }) {
-    const [sliderValue, setSliderValue] = useState(0);
+    const [sliderValue, setSliderValue] = useState(100);
   function filterDistance(value) {
     console.log('distance filtered', value);
     setSliderValue(value)
@@ -17,9 +17,10 @@ export default function FilterDistance({ onFilterDistance }) {
     <div>
       <label id="slider-label">
           <h2> Set a distance </h2></label>
+          <h1 style={{color:"#8a2be2"}} value={sliderValue}> {sliderValue} miles </h1> 
       <ReactSlider
     
-        defaultValue={0}
+        defaultValue={100}
         ariaLabelledby="slider-label"
         max={1000}
         onAfterChange={filterDistance}
@@ -27,11 +28,10 @@ export default function FilterDistance({ onFilterDistance }) {
         className="customSlider"
         trackClassName="customSlider-track"
         thumbClassName="customSlider-thumb"
-        markClassName="customSlider-mark"
-        marks={100}
+        style={{padding: "20px"}}
 
       />
-          <h3   value={sliderValue}> {sliderValue} miles </h3> 
+
     </div>
   );
 }

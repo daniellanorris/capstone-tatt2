@@ -133,6 +133,6 @@ h3 {
 
 .fixed-card {
   position: fixed;
-  transition: top 2s ease;
+  transition: top .5s ease;
 
 }

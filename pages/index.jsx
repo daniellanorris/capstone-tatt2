@@ -14,7 +14,7 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const [distanceFiltered, setDistance] = useState()
+    const [distanceFiltered, setDistance] = useState(100)
     const [distanceSelect, setDistanceSelected] = useState(false)
 
     const {
@@ -325,40 +325,39 @@ export default function Home() {
 
     const [scrollPosition, setScrollPosition] = useState(0);
 
-useEffect(() => {
-  const handleScroll = () => {
-    setScrollPosition(window.scrollY);
-  };
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrollPosition(window.scrollY);
+        };
 
-  window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll);
 
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-  };
-}, []);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
-const cardPosition = scrollPosition > 480 ? 'fixed' : 'absolute';
-const cardTop = scrollPosition > 480 ? '50%' : '450px';
-const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translate(-50%, 0)';
+
+    console.log(scrollPosition)
+    const cardWidthPercentage = '100%'
+    const cardPosition = scrollPosition > 480 ? 'fixed' : 'relative';
+    const cardTop = scrollPosition > 480 ? '45%' : '200px';
+    const cardTransform = scrollPosition > 480 ? 'translate(0%, -70%)' : 'translate(0%, -70%)';
+
 
 
 
     return (
-        <div sstyle={{ marginLeft: '10px', position: 'relative'}}>
+        <div style={{ marginLeft: '10px', position: 'relative', maxWidth: '100vw' }}>
             {isLoggedIn ? (
                 <div>
                     <h1>Home</h1>
                     <h2>Welcome, {username}</h2>
-                    {isUser ? (
-                        <div> Id: {userId} </div>
-                    ) : (
-                        <div> Id : {artistIdNew} </div>
-                    )}
-                    <div>
+
+                    <h3>
                         Hey friend! It looks like you are in {geolocationData?.address?.city},{' '}
-                        {geolocationData?.address?.state}. Here's a list of
-                        artists that are near you!
-                    </div>
+                        {geolocationData?.address?.state}. You can browse artists near here, or not!
+                    </h3>
 
                     <div class="container" style={{ marginTop: '20px', marginBottom: '20px' }}>
                         <div class="row">
@@ -389,9 +388,12 @@ const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translat
                                 </button>
                             </div>
                             <div>
-                                <div>
-                                    {tattooStyle === true ? (
-                                        <div>
+
+
+                                {tattooStyle === true ? (
+                                    <div className="pt-4">
+                                        <h2> Select tattoo style(s) </h2>
+                                        <div className="m-4 p-2">
                                             <button
                                                 buttonname="American Traditional"
                                                 className={selectedButtons['American Traditional'] ? 'selected' : ''}
@@ -414,21 +416,23 @@ const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translat
                                                 Fine Line
                                             </button>
                                         </div>
-                                    ) : null}
-                                </div>
+                                    </div>
+                                ) : null}
                             </div>
+
                         </div>
                         {distanceSelect === true ? (
-                            <FilterDistance onFilterDistance={handleFilterDistance}  />
+                            <div style={{ borderRadius: "30px" }} className="mt-3">
+                                <FilterDistance onFilterDistance={handleFilterDistance} />
+                            </div>
                         ) : (null)
                         }
                     </div>
 
-                    {artistData && artistData.data && ( 
+                    {artistData && artistData.data && (
                         isDesktop ? (
-                            <div className="container">
+                            <div className="container pt-4">
                                 <div className="row">
-                                    <h3>Click on each card to access artist profile pages!</h3>
                                     <div className="col-5">
                                         {error ? (
                                             <p>Error fetching artists: {error}</p>
@@ -470,6 +474,7 @@ const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translat
                                                                     {savedArtists && savedArtists[item._id] ? 'Saved Artist' : 'Save Artist'}
                                                                 </button>
                                                             ) : null}
+
                                                         </div>
                                                     );
 
@@ -477,72 +482,79 @@ const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translat
                                             </ul>
                                         )}
                                     </div>
-                                    <div className="col-7 mt-4 dark-card" >
-                                    <div className="fixed-card" style={{ position: cardPosition, top: cardTop, left: '93%', transform: cardTransform, width: "100%"}}>
-                                        <div>
-                                            <div className="col-9">
-                                                <ul style={{ padding: "0px" }}>
-
-                                                    {selectedArtist ? (
-                                                        <div className={`card mt-4 d-flex justify-content-end`}>
-                                                            <Link href="/artist/[artistId]" as={`/artist/${selectedArtist._id}`}>
-                                                                <h3 className="custom-card-header">
-                                                                    {selectedArtist.firstname} {selectedArtist.lastname}
-                                                                </h3>
-                                                                <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                                    <img src={selectedArtist.profilePicture ? selectedArtist.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${selectedArtist.firstname} ${selectedArtist.lastname}`} />
-                                                                </div>
-                                                                <div className="col-4">
-                                                                    <ArtistDetails artistId={selectedArtist._id} userId={userId} />
-                                                                </div>
-                                                                <p>@{selectedArtist.username}</p>
-                                                                <p>Distance: {selectedArtist.distance} miles </p>
-                                                                {selectedArtist.tattooStyle && selectedArtist.tattooStyle.length > 0 && (
-                                                                    <div>
-                                                                        <p>Tattoo Styles:</p>
-                                                                        <ul>
-                                                                            {selectedArtist.tattooStyle.map((style, styleIndex) => (
-                                                                                <li key={styleIndex}>{style}</li>
-                                                                            ))}
-                                                                        </ul>
-                                                                    </div>
-                                                                )}
-                                                            </Link>
-
-                                                            {isUser ? (
-                                                                <button
-                                                                    style={{ width: "50%" }}
-                                                                    className={`button ${savedArtists && savedArtists[selectedArtist._id] ? 'selected' : ''}`}
-                                                                    onClick={() => saveArtist(selectedArtist._id, userId)}
-                                                                >
-                                                                    {savedArtists && savedArtists[selectedArtist._id] ? 'Saved Artist' : 'Save Artist'}
-                                                                </button>
-                                                            ) : null}
-                                                        </div>
-                                                    ) : (
-                                                        null
-
-                                                    )}
-
-                                                </ul>
-                                          
-                                        </div>
-                                        {selectedArtist && selectedArtist.image && (
+                                    <div className="col-7 mt-4 dark-card container" style={{ maxWidth: '100vw', position: "relative" }}>
+                                        <div style={{ position: cardPosition, top: cardTop, transform: cardTransform, width: cardWidthPercentage }}>
                                             <div>
-                                                <div className="row imageContainer">
-                                                    {Object.values(selectedArtist.image).map((imageUrl, index) => (
-                                                        <div key={index} className="col-2 m-0">
-                                                            <img
-                                                                src={imageUrl}
-                                                                alt={`Image ${index}`}
-                                                                className="img-fluid"
-                                                            />
-                                                        </div>
-                                                    ))}
+                                                <div className="col-9" style={{ width: '100%', zIndex: '100' }}>
+                                                    <ul style={{ padding: "0px" }}>
+
+                                                        {selectedArtist ? (
+                                                            <div className={`card mt-4 d-flex justify-content-end `} style={{ width: '100%' }}>
+                                                                <Link href="/artist/[artistId]" as={`/artist/${selectedArtist._id}`}>
+                                                                    <h3 className="custom-card-header">
+                                                                        {selectedArtist.firstname} {selectedArtist.lastname}
+                                                                    </h3>
+                                                                    <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                                        <img src={selectedArtist.profilePicture ? selectedArtist.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${selectedArtist.firstname} ${selectedArtist.lastname}`} />
+                                                                    </div>
+                                                                    <div className="col-4">
+                                                                        <ArtistDetails artistId={selectedArtist._id} userId={userId} />
+                                                                    </div>
+                                                                    <p>@{selectedArtist.username}</p>
+                                                                    <p>Distance: {selectedArtist.distance2} miles </p>
+                                                                    {selectedArtist.tattooStyle && selectedArtist.tattooStyle.length > 0 && (
+                                                                        <div>
+                                                                            <p>Tattoo Styles:</p>
+                                                                            <ul>
+                                                                                {selectedArtist.tattooStyle.map((style, styleIndex) => (
+                                                                                    <li key={styleIndex}>{style}</li>
+                                                                                ))}
+                                                                            </ul>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="container">
+
+                                                                    <div className="mt-4 d-flex">
+                                                                        <div className="row ">
+                                                                            {Object.values(selectedArtist.image).map((imageUrl, index) => (
+                                                                                <div key={index} className="col-2 m-0">
+                                                                                    <img
+                                                                                        src={imageUrl}
+                                                                                        alt={`Image ${index}`}
+                                                                                        className="img-fluid smaller-image"
+
+
+                                                                                    />
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>
+
+                                                                </Link>
+
+                                                                {isUser ? (
+                                                                    <button
+                                                                        style={{ width: "50%" }}
+                                                                        className={`button ${savedArtists && savedArtists[selectedArtist._id] ? 'selected' : ''}`}
+                                                                        onClick={() => saveArtist(selectedArtist._id, userId)}
+                                                                    >
+                                                                        {savedArtists && savedArtists[selectedArtist._id] ? 'Saved Artist' : 'Save Artist'}
+                                                                    </button>
+                                                                ) : null}
+
+
+                                                            </div>
+                                                        ) : (
+                                                            null
+
+                                                        )}
+
+                                                    </ul>
+
                                                 </div>
                                             </div>
-                                        )}
-                                        </div>
+
                                         </div>
 
 
@@ -552,15 +564,14 @@ const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translat
                             </div>
 
                         ) : (
-                            <div className="container">
+                            <div className="container pt-4">
                                 <div className="row">
-                                    <h3>Click on each card to access artist profile pages!</h3>
                                     <div className="col-10">
                                         {error ? (
                                             <p>Error fetching artists: {error}</p>
                                         ) : (
                                             <ul style={{ padding: "0px" }}>
-                                                {artistData.data.map((item, index) => (
+                                                {artistsWithDistance.map((item, index) => (
                                                     <div key={index} className="card m-4 d-flex justify-content-end">
                                                         <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
                                                             <h3 className="custom-card-header">
@@ -574,7 +585,7 @@ const cardTransform = scrollPosition > 480 ? 'translate(-50%, -70%)' : 'translat
 
                                                             </div>
                                                             <p>@{item.username}</p>
-                                                            <p>Distance: {item.distance} miles </p>
+                                                            <p>Distance: {item.distance2} miles </p>
                                                             {item.tattooStyle && item.tattooStyle.length > 0 && (
                                                                 <div>
                                                                     <p>Tattoo Styles:</p>
