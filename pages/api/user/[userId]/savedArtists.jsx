@@ -14,7 +14,7 @@ export default async (req, res) => {
         const { artistId, userId} = req.body;
         const user = await User.findById(userId);
         const artist = await Artist.findById(artistId);
-        console.log(artist)
+
 
         if (!user || !artistId) {
           return res.status(404).json({ success: false, message: 'User or artist not found' });

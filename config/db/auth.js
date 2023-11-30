@@ -16,20 +16,12 @@ export async function loginForUser(username, password) {
     throw new Error('Database connection error');
 });
 
-    console.log('username' + username)
     const user = await User.findOne({username}).lean()
-    console.log('user  ' + user.username)
 
     if (!user)
         throw new Error('User not found');
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-    console.log(isPasswordCorrect)
-
-    console.log('password   ' + password)
-
-    console.log('password  ' + user.password)
 
     if (!isPasswordCorrect)
         throw new Error('Password is incorrect');
@@ -50,7 +42,6 @@ export async function loginForArtist(username, password) {
 
     const artist = await Artist.findOne({ username }).lean();
 
-    console.log('artist on auth route' + artist.username)
 
     if (!artist)
         throw new Error('Artist not found');

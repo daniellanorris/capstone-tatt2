@@ -28,7 +28,7 @@ export default function ArtistPage() {
 
           const artistData = await response.json();
           setArtistData(artistData);
-          console.log('Artist Data:', artistData);
+  
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -38,7 +38,7 @@ export default function ArtistPage() {
       }
     };
 
-    console.log('Current artistId:', artistId);
+
     fetchData();
   }, [artistId]);
 

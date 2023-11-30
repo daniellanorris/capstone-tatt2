@@ -40,7 +40,6 @@ export default async (req, res) => {
 
   
         user.profileUrl = profileUrls
-        console.log(profileUrls)
 
         await user.save();
 

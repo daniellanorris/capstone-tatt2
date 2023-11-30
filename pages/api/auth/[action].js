@@ -23,8 +23,7 @@ export default withIronSessionApiRoute(
 )
 async function loginUser(req, res) {
     const { username, password } = req.body;
-    console.log('Received username:', username);
-    console.log('Provided password during login attempt:', password);
+
     
     try {
         const user = await loginForUser(username, password);
@@ -41,18 +40,15 @@ async function loginUser(req, res) {
 async function loginArtist(req, res) {
     const { username, password } = req.body;
 
-    console.log('Received username:', username);
-    console.log('Provided password during login attempt:', password);
-
     try {
         const artist = await loginForArtist(username, password);
         req.session.artist = artist;
-        console.log(req.session.artist)
+
 
         await req.session.save();
         res.status(200).end();
     } catch (error) {
         res.status(400).json({ error: error.message + 'failed' });
-        console.log('issue with the login route for artist')
+  
     }
 }

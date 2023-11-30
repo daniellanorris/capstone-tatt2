@@ -34,14 +34,13 @@ export default async (req, res) => {
         }
 
         const { imageUrls}  = req.body;
-  
-        console.log(req.body)
+
 
   
         const imageDocuments = imageUrls.map((imageUrl) => new Image({ imageURL: imageUrl }));
         
         const savedImages = await Image.insertMany(imageDocuments);
-        console.log('savedImages' + savedImages)
+
 
         const imageURLS = savedImages.map((image) => image.imageURL);
 

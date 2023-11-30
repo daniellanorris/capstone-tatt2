@@ -34,7 +34,6 @@ export default async (req, res) => {
         }
 
         const {profileUrls} = req.body
-        console.log(req.body)
 
   
         artist.profilePicture = profileUrls

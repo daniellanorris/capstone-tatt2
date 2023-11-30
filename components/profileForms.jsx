@@ -32,12 +32,9 @@ const ProfileUploadForm = () => {
         alert('Profile Picture upload failed.');
       } else {
         alert('Image uploaded successfully.');
-        console.log('S3 URL: ' + data.Location);
 
         // S3 URL for storage
         const s3Url = data.Location;
-
-        console.log(s3Url);
 
         // Set S3 URL directly to the state
         setArtistProfileData(s3Url);
@@ -58,7 +55,6 @@ const ProfileUploadForm = () => {
     })
       .then((response) => {
         if (response.ok) {
-          console.log('S3 URLs saved successfully in your API.');
         } else {
           console.error('Failed to save S3 URLs.');
         }

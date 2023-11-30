@@ -27,7 +27,6 @@ export default function Login(props) {
 
 
     const router = useRouter();
-    console.log(props.user)
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -59,23 +58,18 @@ export default function Login(props) {
 
                     const userData = await fetchUsers();
 
-                    console.log('user data', userData);
-
                     const userArray = userData.data; // Access the 'data' property
 
                     const user = userArray.find(user => user.username === username); 
                     
-                    console.log(user)// Use 'find' on the array
                     const userId = user ? user._id : null;
-
-                    console.log('userId' + userId)
 
                     setUserId(userId)
 
 
                     const responseBody = await response.text();
                     const res = responseBody ? JSON.parse(responseBody) : {};
-                    console.log('responseBody:', responseBody);
+
 
                     cookie.set("token", JSON.stringify({ username, isUser: true, isArtist: false, isLoggedIn: true, userId }), { expires: 365 });
 

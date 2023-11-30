@@ -5,7 +5,6 @@ import '../../../public/styles/slider.css';
 export default function FilterDistance({ onFilterDistance }) {
     const [sliderValue, setSliderValue] = useState(100);
   function filterDistance(value) {
-    console.log('distance filtered', value);
     setSliderValue(value)
 
     if (onFilterDistance) {

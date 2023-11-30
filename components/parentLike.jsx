@@ -11,7 +11,6 @@ export default function ArtistDetails({ artistId, userId }) {
       try {
         const res = await fetch(`/api/artist/${artistId}/likes`);
         const data = await res.json();
-        console.log(data.data.likes.length)
         setLikes(data.data.likes.length);
       } catch (error) {
         console.error('Error fetching likes:', error);

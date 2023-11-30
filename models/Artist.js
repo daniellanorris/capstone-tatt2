@@ -77,8 +77,6 @@ ArtistSchema.pre('save', async function (next) {
 });
 
 ArtistSchema.methods.incrementLikes = async function (userId, artistId) {
-    console.log('userId:', userId);
-    console.log('artistId:', artistId)
 
         // const existingLike = await Likes.findOne({ user: userId, artist: artistId});
         // console.log('existing like:', existingLike);
@@ -95,11 +93,9 @@ ArtistSchema.methods.incrementLikes = async function (userId, artistId) {
         artist: artistId,
     });
 
-    console.log('newLike:', newLike);
 
     try {
         const result = await newLike.save();
-        console.log('Save result:', result);
     
         this.likes.push(newLike);
     

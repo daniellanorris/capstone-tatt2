@@ -67,7 +67,6 @@ export default function ImageForm() {
     updatedSelectedStyles[index] = !updatedSelectedStyles[index];
     setSelectedStyles(updatedSelectedStyles);
     setTattooStyles(...tattooStyles, selectedStyles)
-    console.log(tattooStyles)
   }
   return (
     <>
@@ -81,8 +80,8 @@ export default function ImageForm() {
       <ProfileUploadForm />
       <div>
         <h2>Select your preferred tattoo styles</h2>
-        <div class="grid column">
-          <div class="card col-6" style={{ padding: '10px' }}>
+        <div className="grid column">
+          <div className="card col-6" style={{ padding: '10px' }}>
             <form>
               {tattooStylesArray.map((style, index) => (
                 <input

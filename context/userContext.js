@@ -33,14 +33,11 @@ export const UserContextProvider = ({ children }) => {
       const { userId, isUser, isArtist, isLoggedIn, artistIdNew} = JSON.parse(token);
       setUserId(userId);
       setIsLoggedIn(isLoggedIn);
-      console.log(artistIdNew)
 
 
       if (isArtist) {
         setIsArtist(true)
         setArtistId(artistIdNew);
-
-        console.log(artistIdNew)
         setTattooStyles(tattooStyles)
       }
       if (isUser === true) {
@@ -79,7 +76,6 @@ export const UserContextProvider = ({ children }) => {
             }
 
             const savedArtistsData = await savedArtistsResponse.json();
-            console.log(savedArtistsData);
 
             setSavedArtists((prevSavedArtists) => {
                 const newArray = Array.isArray(prevSavedArtists) ? [...prevSavedArtists] : [];
@@ -105,15 +101,12 @@ export const UserContextProvider = ({ children }) => {
       if (artistIdNew !== null) {
       setArtistId(artistIdNew)
       try {
-        console.log(artistIdNew)
         const response = await fetch(`/api/artist/${artistIdNew}/profile`);
         const result = await response.json();
-        console.log('artistid from context'+ artistIdNew)
 
 
         if (result.success && typeof result.data === 'object') {
           const profileUrl = result.data.profilePicture;
-          console.log('profileUrl' + profileUrl)
           
           if (profileUrl) {
             setArtistProfileData(profileUrl);
@@ -141,11 +134,9 @@ export const UserContextProvider = ({ children }) => {
       try {
         const response = await fetch(`/api/artist/${artistIdNew}`);
         const result = await response.json();
-        console.log('artistid from context'+ artistIdNew)
 
         if (result.success && typeof result.data === 'object') {
           const tattooList = result.data.tattooStyles;
-          console.log('profileUrl' + tattooStyles)
 
           if (profileUrl) {
             setTattooStyles(tattooList);

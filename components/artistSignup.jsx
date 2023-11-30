@@ -12,21 +12,24 @@ export default function SignupArtists() {
   const [lastname, setLastname] = useState('');
   const [message, setMessage] = useState('');
   const [location, setLocation] = useState('');
-  const [manuallyEnter, setManuallyEnter] = useState(false);
+  const [manuallyEnter, setManuallyEnter] = useState();
   const { setIsArtist } = useUserData();
   const { setIsUser } = useUserData();
   const { setIsLoggedIn, isLoggedIn } = useUserData();
   const { setArtistId, artistIdNew } = useUserData();
 
+  useEffect(() => {
+    setIsUser(false);
+    setIsArtist(true);
+  }, []);
   
   const { geolocationData, error } = GeoLocationData();
 
-  setIsUser(true); 
-  setIsArtist(false)
 
   useEffect(() => {
     if (geolocationData && geolocationData.address) {
       setLocation(`${geolocationData.address.latitude}, ${geolocationData.address.longitude}`);
+
     }
   }, [geolocationData]);
 
@@ -52,7 +55,7 @@ export default function SignupArtists() {
           const artistIdNew = data.data; 
           setArtistId(artistIdNew);
           setIsLoggedIn(true);
-          cookie.set('token', JSON.stringify({ artistIdNew, username, isArtist: true, isUser: false }), { expires: 1 / 24 });
+          cookie.set('token', JSON.stringify({ artistIdNew, username, isArtist: true, isUser: false, isLoggedIn: true }), { expires: 1 / 24 });
           router.push('/')
         } else if (response.status === 400) {
           const data = await response.json();
@@ -108,6 +111,7 @@ export default function SignupArtists() {
         ) : null}
         <button onClick={() => setManuallyEnter(true)}> Manually enter location</button>
         <button onClick={() => setManuallyEnter(false)}> Pull auto location - more accurate</button>
+        {manuallyEnter === false ? (<p> Auto Location Sent! </p>) : null}
         <button type="button" onClick={handleValidation}>
           Submit
         </button>

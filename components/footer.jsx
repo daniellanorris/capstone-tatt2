@@ -3,10 +3,11 @@ import {useUserData} from '../context/userContext'
 
 
 export default function Footer() {
-   const {isUser, artistIdNew, userId} = useUserData()
+   const {isUser, artistIdNew, userId, isLoggedIn} = useUserData()
 
     return (
         <>
+        {isLoggedIn ? (
         <footer className="footer">
             <nav>
                 <div className="logo">
@@ -24,6 +25,8 @@ export default function Footer() {
                 </div>
             </nav>
         </footer>
+        ) : (null)
+}
         </>
     )
 

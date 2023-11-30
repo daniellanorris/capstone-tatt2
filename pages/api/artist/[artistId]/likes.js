@@ -12,7 +12,7 @@ export default async (req, res) => {
             try {
                 const {artistId} = req.body
                 const artist = await Artist.findOne({artistId});
-                console.log(artist)
+
 
                 if (!artist) {
                     return res.status(404).json({ success: false, message: 'Artist not found' });
@@ -28,10 +28,10 @@ export default async (req, res) => {
             case 'POST':
                 try {
                     const { userId, artistId } = req.body;
-                    console.log('post values', artistId, userId)
+         
             
                     const artist = await Artist.findOne({ _id: artistId });
-                    console.log('artist test', artist)
+     
             
                     if (!artist) {
                         return res.status(404).json({ success: false, message: 'Artist not found' });

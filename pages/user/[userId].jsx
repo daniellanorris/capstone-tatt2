@@ -6,9 +6,7 @@ import { useUserData } from '../../context/userContext';
 export default function UserProfile() {
     const { userId } = useUserData();
     const userId2 = userId;
-    console.log('userId' + userId);
 
-    console.log('userId' + userId);
     const [newArtist, setNewArtist] = useState([]);
 
     const { artistIdNew, profileData, setProfileData } = useUserData();
@@ -21,12 +19,12 @@ export default function UserProfile() {
                 if (savedArtistsResponse.ok) {
                     const artistData = await savedArtistsResponse.json();
                     setNewArtist(artistData);
-                    console.log(artistData)
+             
                 } else {
-                    console.log('Failed to fetch saved artists');
+
                 }
             } catch (e) {
-                console.log('Issue getting artist data');
+
             }
         }
 

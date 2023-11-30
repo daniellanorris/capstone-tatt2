@@ -1,14 +1,26 @@
 // pages/_document.js
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-
-
+import cookie from 'js-cookie';
 
 class MyDocument extends Document {
   render() {
+      const token = cookie.get('token');
+      let isLoggedIn = true;
+
+  
+      if (token) {
+        const parsedToken = JSON.parse(token);
+        isLoggedIn = parsedToken.isLoggedIn;
+      }
+  
+      const bodyClass = isLoggedIn === true ? 'body' : 'body-not-logged';
+  
+
     return (
       <Html lang="en">
         <Head>
           <meta charSet="utf-8" />
+          <meta title="Tatt2 Application" />
           <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -22,8 +34,9 @@ class MyDocument extends Document {
           />
           <script src="https://js.radar.com/v3/radar.min.js"></script>
         </Head>
-        <body>
-          <Main/>
+
+        <body className={bodyClass}>
+          <Main />
           <NextScript />
         </body>
       </Html>
@@ -32,3 +45,4 @@ class MyDocument extends Document {
 }
 
 export default MyDocument;
+

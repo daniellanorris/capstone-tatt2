@@ -3,7 +3,6 @@ import useAddLikes from '../config/db/controllers/addLikes.js';
 
 export default function LikeButton({ artistId, userId, likes, setLikes }) {
    const { addLikes, isLoading } = useAddLikes();
-   console.log(artistId, userId )
  
    async function handleLikeClick(event) {
       event.preventDefault();
