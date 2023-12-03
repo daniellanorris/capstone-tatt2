@@ -20,8 +20,8 @@ const UserImageUploadForm = () => {
     }
   
     AWS.config.update({
-      accessKeyId: process.env.REACT_APP_AWS_ACCESS,
-      secretAccessKey: process.env.REACT_APP_AWS_SECRET,
+      accessKeyId: process.env.AWS_ACCESS,
+      secretAccessKey: process.env.AWS_SECRET,
       region: 'us-east-1',
     });
   
