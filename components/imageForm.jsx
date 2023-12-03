@@ -16,8 +16,8 @@ const ImageUploadForm = () => {
     }
   
     AWS.config.update({
-      accessKeyId: process.env.AWS_ACCESS,
-      secretAccessKey: process.env.AWS_SECRET,
+      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS,
+      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET,
       region: 'us-east-1',
     });
   
