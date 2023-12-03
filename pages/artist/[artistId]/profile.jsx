@@ -3,6 +3,8 @@ import ImageUploadForm from '../../../components/imageForm';
 import { useUserData } from '../../../context/userContext';
 import ProfileUploadForm from '../../../components/profileForms';
 import { useRouter } from 'next/router'
+import UploadAddress from '../../../components/addressUpload'
+import UploadBio from '../../../components/bioUpload'
 
 
 export default function ImageForm() {
@@ -67,9 +69,14 @@ export default function ImageForm() {
     updatedSelectedStyles[index] = !updatedSelectedStyles[index];
     setSelectedStyles(updatedSelectedStyles);
     setTattooStyles(...tattooStyles, selectedStyles)
+
+  }
+  function goBack() {
+    router.back()
   }
   return (
     <>
+    <button onClick={goBack}> Go Back </button>
     {artistIdNew == artistId ? (
     <div style={{ backgroundImage: `url('/oranges.jpg')`, width: 'auto' }}>
       <ImageUploadForm />
@@ -101,6 +108,18 @@ export default function ImageForm() {
             </form>
           </div>
         </div>
+      </div>
+      <div>
+      <div className="grid column">
+        <div className='card col-6' style={{padding: '10px'}}>
+          <UploadAddress artistId={artistId}/>
+          </div> 
+      </div>
+      <div className="grid column">
+        <div className='card col-6' style={{padding: '10px'}}>
+          <UploadBio artistId={artistId}/>
+          </div> 
+      </div>
       </div>
     </div>
   

@@ -154,11 +154,25 @@ h3 {
   flex-wrap: wrap;
 }
 
+.grid-container {
+  width: auto;
+  height: auto;
+  
+}
+
+.grid-big-container {
+
+  display: flex;
+  padding: 20px;
+  background-color:rgba(0, 0, 0, 0.1);
+
+}
 
 
 .img-fluid {
-  max-width: 100px;
-  height: auto;
+  height: 150px;
+  width: 150px;
+  overflow: hidden;
 }
 
 .smaller-image {
@@ -171,3 +185,9 @@ h3 {
   position: relative;
 }
 
+.square {
+  width: 100%;
+  padding-bottom: 100%;
+  background-size: cover;
+  background-position: center;
+}

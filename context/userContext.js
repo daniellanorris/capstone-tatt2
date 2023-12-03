@@ -17,6 +17,7 @@ export const UserContextProvider = ({ children }) => {
   const [tattooStyles, setTattooStyles] = useState([])
   const [userLat, setUserLat] = useState(null);
   const [userLon, setUserLon] = useState(null);
+  const [selectedArtist, setSelectedArtist] = useState(null);
 
   const setUserData = (lat, lon) => {
     setUserLat(lat);
@@ -159,6 +160,8 @@ export const UserContextProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
+        selectedArtist, 
+        setSelectedArtist,
         userId,
         setUserId,
         isArtist,

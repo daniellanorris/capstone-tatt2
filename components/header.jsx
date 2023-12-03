@@ -17,7 +17,7 @@ export default function Header() {
       <Navbar expand="lg" className="p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', color: 'black', marginBottom: '10px', width: '100vw' }}>
         <Container>
           <Navbar.Brand href="/" className="d-flex align-items-center text-black text-decoration-none">
-            <Image src="/logo.png" width={100} height={100} />
+            <Image src="/logo.png" width={100} />
           </Navbar.Brand>
           {isLoggedIn === true && (
             <div>

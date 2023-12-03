@@ -16,8 +16,8 @@ const ImageUploadForm = () => {
     }
   
     AWS.config.update({
-      accessKeyId: 'AKIAZJUT7CEXODUZBHF5',
-      secretAccessKey: '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',
+      accessKeyId: process.env.REACT_APP_AWS_ACCESS,
+      secretAccessKey: process.env.REACT_APP_AWS_SECRET,
       region: 'us-east-1',
     });
   
@@ -63,7 +63,7 @@ const ImageUploadForm = () => {
     })
       .then((response) => {
         if (response.ok) {
-          
+
         } else {
           console.error('Failed to save S3 URLs.');
         }

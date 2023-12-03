@@ -21,6 +21,10 @@ class MyDocument extends Document {
         <Head>
           <meta charSet="utf-8" />
           <meta title="Tatt2 Application" />
+          <link 
+          rel="icon"
+          href='/favicon-logo.png'
+          />
           <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"

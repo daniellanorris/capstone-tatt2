@@ -2,6 +2,9 @@ import React from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const UserImageUploadForm = () => {
   const { selectedFile, setSelectedFile, profileData, setProfileData, userId} = useUserData();
@@ -17,8 +20,8 @@ const UserImageUploadForm = () => {
     }
   
     AWS.config.update({
-      accessKeyId: 'AKIAZJUT7CEXODUZBHF5',
-      secretAccessKey: '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',
+      accessKeyId: process.env.REACT_APP_AWS_ACCESS,
+      secretAccessKey: process.env.REACT_APP_AWS_SECRET,
       region: 'us-east-1',
     });
   

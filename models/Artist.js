@@ -60,6 +60,9 @@ const ArtistSchema = new mongoose.Schema({
     bookingUrl: {
         type: String,
     },
+    address: {
+        type: String,
+    },
     likes: [
         {
             type: mongoose.Schema.Types.ObjectId,

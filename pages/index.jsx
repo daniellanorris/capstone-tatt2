@@ -29,14 +29,15 @@ export default function Home() {
         isArtist,
         setArtistId,
         artistIdNew,
-        setIsLoggedIn,
         setIsUser,
         setIsArtist,
         savedArtists,
         setSavedArtists,
         userLat,
         userLon,
-        setUserData
+        setUserData,
+        selectedArtist, 
+        setSelectedArtist
 
     } = useUserData();
 
@@ -138,7 +139,6 @@ export default function Home() {
     const [tattooStyle, setIsTattooStyle] = useState(false);
     const [selectedButtons, setSelectedButtons] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth > 750);
-    const [selectedArtist, setSelectedArtist] = useState(null);
     const [artistId, setArtistSelect] = useState('');
     const [loading, setLoading] = useState(true);
     const [isArtistSaved, setIsArtistSaved] = useState(false);
@@ -538,14 +538,14 @@ export default function Home() {
                                                                                 </div>
                                                                             )}
                                                                             <div>
-                                                                                <div className="row">
+                                                                                <div className="row grid-big-container">
                                                                                     {Object.values(selectedArtist.image).map((imageUrl, index) => (
-                                                                                        <div key={index} className="col-3 mx-0">
+                                                                                        <div key={index} className="col-1 mx-0 p-0 grid-container">
                                                                                             <img
                                                                                                 src={imageUrl}
                                                                                                 alt={`Image ${index}`}
                                                                                                 className="img-fluid"
-                                                                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                                                                style={{ objectFit: 'cover' }}
                                                                                             />
                                                                                         </div>
                                                                                     ))}
