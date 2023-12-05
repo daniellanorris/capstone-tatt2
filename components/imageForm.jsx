@@ -3,10 +3,6 @@ import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
 
 
-console.log(process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID)
-console.log(process.env.REACT_APP_AWS_ACCESS_KEY_ID)
-
-
 const ImageUploadForm = () => {
   const { selectedFile, setSelectedFile, imageData, setImageData, artistIdNew} = useUserData();
 
