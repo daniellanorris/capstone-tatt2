@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
-const dotenv = require('dotenv');
-dotenv.config({ path: '.env.local' });
+
+
+console.log(process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID)
+console.log(process.env.REACT_APP_AWS_ACCESS_KEY_ID)
+
 
 const ImageUploadForm = () => {
   const { selectedFile, setSelectedFile, imageData, setImageData, artistIdNew} = useUserData();
@@ -18,9 +21,9 @@ const ImageUploadForm = () => {
     }
   
     AWS.config.update({
-      accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-      secretAccessKey:process.env.REACT_APP_AWS_SECRET_ACCESS,
-      region: 'us-east-1',
+      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+      secretAccessKey:process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+      region: process.env.NEXT_PUBLIC_AWS_REGION,
     });
   
     const s3 = new AWS.S3();
