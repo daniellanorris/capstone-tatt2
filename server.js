@@ -5,12 +5,10 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
-  // Custom server-side route for redirection
   server.get('/old-route', (req, res) => {
     res.redirect('/new-route');
   });
 
-  // Default Next.js handler
   server.all('*', (req, res) => {
     return handle(req, res);
   });
