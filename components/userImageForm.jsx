@@ -2,9 +2,6 @@ import React from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 
 const UserImageUploadForm = () => {
   const { selectedFile, setSelectedFile, profileData, setProfileData, userId} = useUserData();
@@ -20,8 +17,8 @@ const UserImageUploadForm = () => {
     }
   
     AWS.config.update({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: `AKIAZJUT7CEXAHBPT3WA`,
+      secretAccessKey:`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`,
       region: 'us-east-1',
     });
   
@@ -83,7 +80,7 @@ const UserImageUploadForm = () => {
           <input type="file" onChange={handleFileChange} className="form-control mb-3" />
           <button onClick={handleUpload} className="btn btn-primary">Upload Image</button>
           {profileData && (
-            <img src={profileData} alt="Uploaded Image" className="img-fluid mt-3" style={{width:"100px"}} />
+            <img src={profileData} alt="Uploaded Image" className="img-fluid mt-3" style={{width:"100px", height:"auto"}} />
           )}
         </div>
       </div>

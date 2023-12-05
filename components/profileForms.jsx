@@ -2,9 +2,6 @@ import React, { useEffect } from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 const ProfileUploadForm = () => {
   const { selectedFile, setSelectedFile, setArtistProfileData, artistIdNew, artistProfileData } = useUserData();
 
@@ -16,11 +13,10 @@ const ProfileUploadForm = () => {
 
   const handleUpload = () => {
     AWS.config.update({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: `AKIAZJUT7CEXAHBPT3WA`,
+      secretAccessKey:`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`,
       region: 'us-east-1',
     });
-
 
     const s3 = new AWS.S3();
 
@@ -59,6 +55,7 @@ const ProfileUploadForm = () => {
     })
       .then((response) => {
         if (response.ok) {
+
         } else {
           console.error('Failed to save S3 URLs.');
         }

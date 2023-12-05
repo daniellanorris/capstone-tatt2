@@ -11,7 +11,7 @@ export default function Logout() {
     cookie.remove('token');
     setIsLoggedIn(false)
 
-    router.push('/signup');
+    router.push('/');
   };
 
   return (

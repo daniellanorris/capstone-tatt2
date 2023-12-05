@@ -56,7 +56,7 @@ export default function SignupArtists() {
           setArtistId(artistIdNew);
           setIsLoggedIn(true);
           cookie.set('token', JSON.stringify({ artistIdNew, username, isArtist: true, isUser: false, isLoggedIn: true }), { expires: 1 / 24 });
-          router.push('/')
+          router.push('/home')
         } else if (response.status === 400) {
           const data = await response.json();
           setMessage(data.message);

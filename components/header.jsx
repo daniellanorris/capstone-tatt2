@@ -14,10 +14,10 @@ export default function Header() {
   return (
 
     <>
-      <Navbar expand="lg" className="p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', color: 'black', marginBottom: '10px', width: '100vw' }}>
+      <Navbar expand="lg" className="p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', color: 'black', marginBottom: '10px', width: '100vw'}}>
         <Container>
-          <Navbar.Brand href="/" className="d-flex align-items-center text-black text-decoration-none">
-            <Image src="/logo.png" width={100} />
+          <Navbar.Brand href="/home" className="d-flex align-items-center text-black text-decoration-none">
+            <Image src="/logo.png" width={100} style={{zIndex: "2" }}/>
           </Navbar.Brand>
           {isLoggedIn === true && (
             <div>
@@ -26,7 +26,7 @@ export default function Header() {
             <Navbar.Collapse id="navbarNav" className="justify-content-between">
 
               <Nav className="me-auto">
-                <Nav.Link href={isLoggedIn === true ? "/" : "/login"} style={{ color: "black" }}><h3>Home</h3></Nav.Link>
+                <Nav.Link href={isLoggedIn === true ? "/home" : "/"} style={{ color: "black" }}><h3>Home</h3></Nav.Link>
                 <Nav.Link href="/about" style={{ color: "black" }}><h3>About</h3></Nav.Link>
                 <Nav.Link href="/contact" style={{ color: "black" }}><h3>Contact</h3></Nav.Link>
                 {isUser === true && <Nav.Link href={`/user/${userId}`} style={{ color: "black" }}><h3>User Profile</h3></Nav.Link>}

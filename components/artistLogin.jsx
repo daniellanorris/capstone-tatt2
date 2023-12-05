@@ -58,7 +58,7 @@ export default function LoginArtists(props) {
           cookie.set("token", JSON.stringify({ username, isUser: false, isArtist: true, isLoggedIn: true, artistIdNew }), { expires: 365 }); 
           setIsLoggedIn(true); 
           setMessage('Login successful');
-          router.push('/');
+          router.push('/home');
         } else if (response.status === 400) {
           const data = await response.json();
           setMessage(data.message || 'Invalid credentials');

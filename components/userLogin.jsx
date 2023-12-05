@@ -75,7 +75,7 @@ export default function Login(props) {
 
                     setMessage('Login successful');
                     setIsLoggedIn(true);
-                    router.push('/');
+                    router.push('/home');
                 } else if (response.status === 400) {
                     const data = await response.json();
                     setMessage(data.message || 'Invalid credentials');

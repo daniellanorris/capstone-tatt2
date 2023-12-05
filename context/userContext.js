@@ -97,6 +97,29 @@ export const UserContextProvider = ({ children }) => {
   }, [setProfileData, userId, setSavedArtists]);
 
   useEffect(() => {
+    const fetchSavedTattoos = async () => {
+      if (artistIdNew !== null) {
+        setArtistId(artistIdNew)
+      try {
+        const response = await fetch(`/api/artist/${artistIdNew}/tattooStyles`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data)
+          setTattooStyles(data.data.tattooStyle)
+       
+        } else {
+          console.error('Failed to fetch tattoo data');
+        }
+      } catch (error) {
+        console.error('Error fetching tattoo data:', error);
+      }
+    };
+  }
+
+    fetchSavedTattoos();
+  }, [setTattooStyles, artistIdNew]);
+
+  useEffect(() => {
     const fetchArtistData = async () => {
 
       if (artistIdNew !== null) {
@@ -129,33 +152,7 @@ export const UserContextProvider = ({ children }) => {
 
   }, [setArtistProfileData, artistIdNew]);
 
-  useEffect(() => {
-    const fetchTattooStyles = async () => {
-      if (artistIdNew) {
-      try {
-        const response = await fetch(`/api/artist/${artistIdNew}`);
-        const result = await response.json();
 
-        if (result.success && typeof result.data === 'object') {
-          const tattooList = result.data.tattooStyles;
-
-          if (profileUrl) {
-            setTattooStyles(tattooList);
-          } else {
-            setTattooStyles([]);
-          }
-        } else {
-          console.error('Invalid API response:', result);
-        }
-      } catch (error) {
-        console.error('Error fetching artist data:', error);
-      }
-    };
-  }
-
-      fetchTattooStyles();
-
-  }, [setTattooStyles]);
 
   return (
     <UserContext.Provider

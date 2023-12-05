@@ -1,75 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import AWS from 'aws-sdk';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { useUserData } from '../context/userContext';
 
 const ImageUploadForm = () => {
-  const { selectedFile, setSelectedFile, imageData, setImageData, artistIdNew} = useUserData();
+  const { selectedFile, setSelectedFile, imageData, setImageData, artistIdNew } = useUserData();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
   };
-  const handleUpload = () => {
+
+  const handleUpload = async () => {
     if (!selectedFile) {
       alert('Please select a file to upload.');
       return;
     }
-  
 
-    AWS.config.update({ region: 'us-east-1' });
+    const s3 = new S3Client({ region: 'us-east-1' });
 
-
-const credentials = new AWS.Credentials({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-});
-
-AWS.config.credentials = credentials;
-  
-    const s3 = new AWS.S3();
-  
     const params = {
       Bucket: 'tatt2-images',
       Key: `uploads/${Date.now()}-${selectedFile.name}`,
-      Body: 
-          selectedFile
+      Body: selectedFile,
     };
-  
-    s3.upload(params, (err, data) => {
-      if (err) {
-        console.error(err);
-        alert('Image upload to S3 failed.');
-      } else {
-        alert('Image uploaded successfully.');
-  
-  
-        // S3 URL for storage
-        const s3Url = data.Location;
-  
-        // Client
-        const imageUrl = URL.createObjectURL(selectedFile);
-        setImageData(imageUrl);
-  
-        // Send the S3 URL to the API
-        const imageUrls = [s3Url]; // Store the URL(s) in an array
-        sendImageUrlsToAPI(imageUrls);
-      }
-    });
+
+    try {
+      const command = new PutObjectCommand(params);
+      const data = await s3.send(command);
+
+      alert('Image uploaded successfully.');
+
+      const s3Url = data.Location;
+      const imageUrl = URL.createObjectURL(selectedFile);
+      setImageData(imageUrl);
+
+      const imageUrls = [s3Url];
+      sendImageUrlsToAPI(imageUrls);
+    } catch (error) {
+      console.error('Image upload to S3 failed:', error);
+      alert('Image upload to S3 failed.');
+    }
   };
-  
+
   const sendImageUrlsToAPI = (imageUrls) => {
-   
     fetch(`/api/artist/${artistIdNew}/images`, {
       method: 'POST',
-      body: JSON.stringify({ imageUrls }), // Send the array of image URLs
+      body: JSON.stringify({ imageUrls }),
       headers: {
         'Content-Type': 'application/json',
       },
     })
       .then((response) => {
-        if (response.ok) {
-
-        } else {
+        if (!response.ok) {
           console.error('Failed to save S3 URLs.');
         }
       })
@@ -77,15 +59,14 @@ AWS.config.credentials = credentials;
         console.error('Error saving S3 URLs:', error);
       });
   };
-  
-  
 
   return (
-    <div style={{maxWidth: "200px"}}>
-      <h2>Image Upload</h2>
-      <input type="file" onChange={handleFileChange} style={{maxWidth: "300px"}}/>
-      <button onClick={handleUpload}>Upload Image</button>
-      {imageData && <img src={imageData} alt="Uploaded Image" width="200px" height="auto"/>}
+    <div style={{ maxWidth: '200px' }}>
+      <input type="file" onChange={handleFileChange} className="form-control mb-3" style={{ maxWidth: '300px' }} />
+      <button className="btn btn-primary" onClick={handleUpload}>
+        Upload Image
+      </button>
+      {imageData && <img src={imageData} alt="Uploaded Image" className="img-fluid mt-3" width="200px" height="auto" />}
     </div>
   );
 };

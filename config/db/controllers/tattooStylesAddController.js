@@ -1,29 +1,36 @@
+export default function saveTattoosToArtist(artistIdNew, style) {
 
-import Artist from '../../../models/Artist';
-import User from '../../../models/User'
+  const saveTatts = async () => {
+    try {
+        if (!artistIdNew) {
+            console.error('Artist ID is undefined');
+            return;
+        }
+        console.log(style);
 
+        const response = await fetch(`/api/artist/${artistIdNew}/tattooStyles`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ style }),
+        });
+        
 
-// Function to save an artist to a user's savedArtists
-export default async function saveTattoosToArtist() {
-const artistId = req.query.artistId
-const {name} = req.body
+        console.log(response);
 
-  try {
-
-    const artist = await Artist.findById(artistId);
-
-    if (!user || !artist) {
-      return { success: false, message: 'User or artist not found' };
+        if (response === 201) {
+            console.log(response, 'success');
+        } else if (response.status === 400) {
+            const data = await response.json();
+            console.error('Request failed:', data.message);
+        }
+    } catch (error) {
+        console.error('Request failed:', error);
     }
+};
 
-    // Assuming you want to add the artist to the user's savedArtists
-    artist.tattooStyles.push(name);
-    await artist.save();
-
-    return { success: true, message: 'Artist saved to user' };
-  } catch (error) {
-    return { success: false, error: error.message };
+saveTatts();
   }
-}
-
+  
 

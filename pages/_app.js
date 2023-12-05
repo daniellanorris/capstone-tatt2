@@ -8,32 +8,15 @@ import React, { useState, useEffect } from 'react';
 import '../public/styles/global.css';
 
 function MyApp({ Component, pageProps }) {
-  const [loading, setLoading] = useState(true);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
 
 
   return (
       <UserContextProvider>
         <div>
           <Header />
-          {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-              <h3>Loading...</h3>
-            </div>
-          ) : (
-            <>
+           
               <Component {...pageProps} /> <Footer />
-            </>
-          )}
+    
         </div>
       </UserContextProvider>
   );

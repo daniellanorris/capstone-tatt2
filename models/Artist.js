@@ -3,16 +3,6 @@ import bcrypt from 'bcrypt';
 
 import Likes from './Likes'
 
-const tattooStylesSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique: true,
-    }
-});
-
-module.exports = mongoose.models.tattooStyles || mongoose.model('tattooStyles', tattooStylesSchema);
-
 
 
 const ArtistSchema = new mongoose.Schema({
@@ -39,8 +29,7 @@ const ArtistSchema = new mongoose.Schema({
     },
     tattooStyle: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'tattooStyles',
+            type:  String,
         },
     ],
     image: [
@@ -62,13 +51,7 @@ const ArtistSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-    },
-    likes: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Likes',
-        }
-    ],
+    }
 });
 
 

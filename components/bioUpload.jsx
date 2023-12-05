@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const UploadBio = ({ artistId }) => {
     console.log('artistId' + artistId)
-  const [input, setInput] = useState('');
+  const [bioData, setArtistBio] = useState('')
+  const [input, setInput] = useState(bioData);
   const bio = JSON.stringify(input)
+  const [message, setMessage] = useState('')
   console.log(bio)
 
   const uploadBio = async () => {
@@ -35,14 +37,56 @@ const UploadBio = ({ artistId }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchArtist = async () => {
+      try {
+        const response = await fetch(`/api/artist/${artistId}/bio`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+
+          const bioDataInsert = data.data.bio
+
+          setArtistBio(bioDataInsert);
+          setInput(bioDataInsert)
+        } else {
+          console.error('Failed to fetch artist bio');
+        }
+      } catch (error) {
+        console.error('Error fetching artist bio:', error);
+      }
+    };
+  
+    fetchArtist();
+  
+  }, []); 
+
   const handleInputChange = (e) => {
     setInput(e.target.value);
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    uploadBio();
+    setMessage('Bio saved');
+
+    setTimeout(() => {
+      setMessage('');
+    }, 3000);
   };
+
+  useEffect(() => {
+    let timeoutId;
+
+    if (message) {
+      timeoutId = setTimeout(() => {
+        setMessage('');
+      }, 3000);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [message]);
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -53,6 +97,7 @@ const UploadBio = ({ artistId }) => {
         cols={50}
       />
       <button type="submit">Enter</button>
+      {message}
     </form>
   );
 };

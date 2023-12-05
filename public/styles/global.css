@@ -191,3 +191,31 @@ h3 {
   background-size: cover;
   background-position: center;
 }
+
+
+
+.index-bg {
+  position: relative;
+}
+
+.index-bg:before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/oranges.jpg');
+  background-size: cover;
+  z-index: 1;
+}
+
+@media only screen and (max-width: 768px) {
+  .row-column-fix {
+    flex-direction: column;
+  }
+
+  .column-fix {
+    width: 100%;
+  }
+}
