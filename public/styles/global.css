@@ -110,6 +110,12 @@ h3 {
     padding: 5px;
     color: white;
     margin: 2px;
+    transition: background-color 0.5s ease; 
+  
+  }
+  
+  button:active {
+    background-color: #4caf50;
   }
 
   a {

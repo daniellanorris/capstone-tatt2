@@ -14,7 +14,6 @@ export default function Signup() {
     return (
         <div>
         <div className="d-flex flex-column align-items-center" style={{ minHeight: '100vh' }}>
-        <p className="text-center">Welcome to <em>Tatt(2)</em>, the premier app for tattoo lovers and givers.</p>
           <div className="text-center">
             <button onClick={() => { setUser(true); setArtist(false); }}>User Signup</button>
             <button onClick={() => { setUser(false); setArtist(true); }}>Artist Signup</button>
@@ -29,8 +28,8 @@ export default function Signup() {
                 </div>
               </div>
             </div>
+            <p className="text-center"> <a href="/login"> Login instead? Click here. </a></p>
           </div>
-          <p className="text-center"> <a href="/login"> Login instead? Click here. </a></p>
         </div>
         </div>
       );

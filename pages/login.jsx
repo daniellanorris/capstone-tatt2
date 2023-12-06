@@ -10,7 +10,7 @@ export default function Login() {
 
     return (
         <div className="text-center">
-          <div className="d-flex flex-column align-items-center" style={{ minHeight: '100vh' }}>
+          <div className="d-flex flex-column align-items-center" style={{ minHeight: '100vh' , paddingTop: "100px"}}>
       
             <div >
               <button onClick={() => { setUser(true); setArtist(false); }}>User Login</button>

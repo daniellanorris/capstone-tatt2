@@ -101,21 +101,22 @@ export default function SignupArtists() {
           onChange={(e) => setLastname(e.target.value)}
           placeholder="Enter last name"
         />
-        {manuallyEnter === true ? (
+        {/* {manuallyEnter === true ? (
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="Set location"
           />
-        ) : null}
-        <button onClick={() => setManuallyEnter(true)}> Manually enter location</button>
+        ) : null} */}
+        <button onClick={() => setManuallyEnter(true)}> Manually enter location (later)</button>
         <button onClick={() => setManuallyEnter(false)}> Pull auto location - more accurate</button>
         {manuallyEnter === false ? (<p> Auto Location Sent! </p>) : null}
         <button type="button" onClick={handleValidation}>
           Submit
         </button>
         {message && <p>{message}</p>}
+        
       </div>
     </>
   );
