@@ -26,25 +26,51 @@ export const UserContextProvider = ({ children }) => {
 
 
 
+
   useEffect(() => {
     const token = cookie.get('token');
     if (token) {
-     
-      
       const { userId, isUser, isArtist, isLoggedIn, artistIdNew} = JSON.parse(token);
       setUserId(userId);
       setIsLoggedIn(isLoggedIn);
 
 
       if (isArtist) {
+
+        const fetchSavedTattoos = async () => {
+          if (artistIdNew !== null) {
+            setArtistId(artistIdNew)
+          try {
+            const response = await fetch(`/api/artist/${artistIdNew}/tattooStyles`);
+            if (response.ok) {
+              const data = await response.json();
+              console.log(data)
+              setTattooStyles(data.data.tattooStyle)
+           
+            } else {
+              console.error('Failed to fetch tattoo data');
+            }
+          } catch (error) {
+            console.error('Error fetching tattoo data:', error);
+          }
+        };
+      }
+     
+
+        
         setIsArtist(true)
         setArtistId(artistIdNew);
-        setTattooStyles(tattooStyles)
+        fetchSavedTattoos()
       }
       if (isUser === true) {
         setIsUser(true);
       }
+
     }
+
+ 
+      
+    
 
     const fetchUserData = async () => {
       try {
@@ -67,6 +93,8 @@ export const UserContextProvider = ({ children }) => {
         console.error('Error fetching user data:', error);
       }
     };
+
+
     const fetchSavedArtists = async () => {
     try {
         if (userId) {
@@ -96,28 +124,7 @@ export const UserContextProvider = ({ children }) => {
     }
   }, [setProfileData, userId, setSavedArtists]);
 
-  useEffect(() => {
-    const fetchSavedTattoos = async () => {
-      if (artistIdNew !== null) {
-        setArtistId(artistIdNew)
-      try {
-        const response = await fetch(`/api/artist/${artistIdNew}/tattooStyles`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data)
-          setTattooStyles(data.data.tattooStyle)
-       
-        } else {
-          console.error('Failed to fetch tattoo data');
-        }
-      } catch (error) {
-        console.error('Error fetching tattoo data:', error);
-      }
-    };
-  }
 
-    fetchSavedTattoos();
-  }, [setTattooStyles, artistIdNew]);
 
   useEffect(() => {
     const fetchArtistData = async () => {

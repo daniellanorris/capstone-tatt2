@@ -12,8 +12,8 @@ export default function LandingPage() {
                 <div
                     className="col column-fix mt-4"
                     style={{
-                        backgroundColor: 'rgba(255, 165, 0, 0.5)',
-                        boxShadow: '0 0 10px rgba(255, 255, 255, 0.5)',
+                        backgroundColor: 'rgba(140, 175, 255, 0.8)',
+                        boxShadow: '0 0 10px rgba(255, 255, 255, 0.2)',
                         height: "300px",
                     }}
                 >
@@ -39,7 +39,7 @@ export default function LandingPage() {
                 <div
                     className="container col column-fix mt-4 "
                     style={{
-                        backgroundColor: "rgba(255, 115, 0, 0.25)",
+                        backgroundColor: "rgba(255, 255, 255, 0.6)",
                         height: "300px", flex: "1"
                     }}
                 >

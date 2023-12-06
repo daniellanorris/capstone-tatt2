@@ -66,7 +66,7 @@ export default function ArtistPage() {
     fetchData();
   }, [artistId]);
 
-//geocode stuff cont'd.
+  //geocode stuff cont'd.
   // const {geolocationData} = ArtistGeolocationReverse(latAndLong)
   // console.log(geolocationData)
 
@@ -100,15 +100,18 @@ export default function ArtistPage() {
                 />
               </div>
             )}
+
+          </div>
+          <div className="col-10 justify-content-right">
+
+            {(artistIdNew == artistId) && isArtist ? (
+              <a href={`/artist/${artistId}/profile`}>
+                <button> Edit profile </button>
+              </a>
+            ) : null}
           </div>
         </div>
 
-
-        {(artistIdNew == artistId) && isArtist ? (
-          <a href={`/artist/${artistId}/profile`}>
-            <button> Edit profile </button>
-          </a>
-        ) : null}
       </div>
 
       {loading ? (
@@ -116,14 +119,40 @@ export default function ArtistPage() {
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
-        <div className="row mx-auto no-gutters" style={{ maxWidth: '100%' }}>
+        <div className="row mx-auto no-gutters" style={{ maxWidth: '100%', overflow: "none" }}>
           <div className="col-md-4 mb-4 no-gutters">
             <div className="card " >
               <h2 className="custom-card-header">
                 {artistData?.data.firstname} {artistData?.data.lastname}
               </h2>
-              <h3>@{artistData?.data.username}</h3>
-              <p className="card-text" style={{ padding: '5px' }}> {artistData?.data?.address}</p>
+              <div className="row justify-content-center d-flex align-items-center" style={{ maxWidth: "100%" }}>
+                <div className="col-4 ">
+                  <button disabled="true" style={{ backgroundColor: "#8a2be2", padding: "5px" }} > Username </button>
+                </div>
+                <div className="col-7">
+                  <h3>@{artistData?.data.username}</h3>
+                </div>
+              </div>
+              <div className="row justify-content-center" style={{ maxWidth: "100%" }}>
+                <div className="col-4 justify-content-center">
+                  <button disabled="true" style={{ backgroundColor: "#8a2be2", padding: "5px" }} > Location </button>
+                </div>
+                <div className="col-7">
+                  <p style={{ padding: '5px' }}> {artistData?.data?.address}</p>
+                </div>
+              </div>
+              <div className="col text-center" style={{ padding: "0px", color: "purple" }}>
+
+                {artistData?.data?.tattooStyle && artistData?.data?.tattooStyle.length > 0 && (
+                  <h3>
+                    {artistData?.data?.tattooStyle
+                      .filter(style => style !== null)
+                      .map((style, index) => (
+                        <span key={index}><em>{index > 0 ? ', ' : ''}{style}</em></span>
+                      ))}
+                  </h3>
+                )}
+              </div>
             </div>
             <div className="card mt-4">
               <h2 className="custom-card-header">
@@ -148,45 +177,45 @@ export default function ArtistPage() {
             </div>
           </div>
           <div className="col-md-8" >
-          <h3 className="custom-card-header">Images</h3>
-          <div className="card" style={{ padding: '20px' }}>
+            <h3 className="custom-card-header">Images</h3>
+            <div className="card" style={{ padding: '20px' }}>
 
-  <div className="row">
-    {artistData &&
-      artistData.data &&
-      artistData.data.image &&
-      artistData.data.image.map((imageUrl, index) => (
-        <div key={index} className="col-sm-4 col-md-4 col-lg-4 col-6 p-0">
-          <div
-            style={{
-              overflow: 'hidden',
-              margin: '0 auto',
-              width: '100%', 
-              paddingBottom: '100%', 
-              position: 'relative',
-            }}
-          >
-            <img
-              src={imageUrl}
-              className='image-fluid'
-              alt={`Image ${index}`}
-              style={{
-                objectFit: 'cover',
-                width: '100%',
-                height: '100%',
-                position: 'absolute', 
-              }}
-            />
-          </div>
-          {isArtist && artistId == artistIdNew ? (
-            <button onClick={() => deleteImage(imageUrl, artistId)}>
-              Delete
-            </button>
-          ) : null}
-        </div>
-      ))}
-  </div>
-</div>
+              <div className="row">
+                {artistData &&
+                  artistData.data &&
+                  artistData.data.image &&
+                  artistData.data.image.map((imageUrl, index) => (
+                    <div key={index} className="col-sm-4 col-md-4 col-lg-4 col-6 p-0">
+                      <div
+                        style={{
+                          overflow: 'hidden',
+                          margin: '0 auto',
+                          width: '100%',
+                          paddingBottom: '100%',
+                          position: 'relative',
+                        }}
+                      >
+                        <img
+                          src={imageUrl}
+                          className='image-fluid'
+                          alt={`Image ${index}`}
+                          style={{
+                            objectFit: 'cover',
+                            width: '100%',
+                            height: '100%',
+                            position: 'absolute',
+                          }}
+                        />
+                      </div>
+                      {isArtist && artistId == artistIdNew ? (
+                        <button onClick={() => deleteImage(imageUrl, artistId)}>
+                          Delete
+                        </button>
+                      ) : null}
+                    </div>
+                  ))}
+              </div>
+            </div>
 
           </div>
 

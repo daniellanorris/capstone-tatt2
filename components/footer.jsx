@@ -11,14 +11,14 @@ export default function Footer() {
         <footer className="footer">
             <nav>
                 <div className="logo">
-                    <a href="/">
+                    <a href="/home">
                     <Image src="/logo.png" width={100} />
                     </a>
                 </div>
                 <div>
-                    <a href="/"><h3>Home </h3></a>
+                    <a href="/home"><h3>Home </h3></a>
                     {isUser? (
-                    <a href={`/artist/${userId}`}>
+                    <a href={`/user/${userId}`}>
                         <h3>My profile </h3></a>) 
                     :(<a href={`/artist/${artistIdNew}`}><h3> My profile </h3></a>)}
 

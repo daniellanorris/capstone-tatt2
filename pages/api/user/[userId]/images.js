@@ -28,18 +28,20 @@ export default async (req, res) => {
 
     case 'POST':
       try {
-        const userId = req.query.userId;
+        const {userId, profileUrls} = req.body
+        console.log(userId)
         const user = await User.findById(userId);
+        console.log(user)
 
         if (!user) {
           return res.status(404).json({ success: false, message: 'User or artist not found' });
         }
 
-        const {profileUrls} = req.body
+
         console.log('req.body'+ profileUrls)
 
   
-        user.profileUrl = profileUrls
+        user.profileUrl = profileUrls[0]
 
         await user.save();
 

@@ -12,11 +12,7 @@ html, body {
     margin: 0;
     padding: 0;
     background-image: url('/bg_1.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    flex-direction: column;
-    display: flex;
+
   }
 
   .body-not-logged {
@@ -29,18 +25,33 @@ html, body {
     flex-direction: column;
     min-height: 100%;
   }
-  
 
+  body {
+    margin: 0;
+    padding: 0;
+    background-image: url('/bg_1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    flex-direction: column;
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .wrapper {
+    flex: 1;
+  }
+  
   .footer {
-    position: relative;
+    margin-top: "30px";
+    padding: 10px;
+    text-align: center;
     bottom: 0;
     left: 0;
-    padding-bottom: 20px;
-    width: 100%;
-    text-align: center;
-    margin-top: "20px";
+    right: 0;
     background-color: orange;
-}
+  }
+  
 
   .card {
       background-color: #fff;
@@ -205,7 +216,7 @@ h3 {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/oranges.jpg');
+  background-image: url('/login-bg.jpg');
   background-size: cover;
   z-index: 1;
 }

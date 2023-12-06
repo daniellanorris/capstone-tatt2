@@ -53,12 +53,12 @@ export default function UserProfile() {
   }, [artistIdNew]);
 
   return (
-    <div className="container" style={{ paddingBottom: "100px" }}>
+    <div className="container" style={{ paddingBottom: "150px" }}>
       <h1 className="text-left mt-4">User Profile</h1>
 
       <div className="row mt-4">
 
-        <div className="col-md-6" style={{ padding: "0px" }}>
+        <div className="col-md-6">
           <div className="card">
             <h2 className="custom-card-header"> Upload Profile Picture</h2>
             <div style={{ padding: "10px" }}>

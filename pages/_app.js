@@ -9,13 +9,25 @@ import '../public/styles/global.css';
 
 function MyApp({ Component, pageProps }) {
 
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
+
+  useEffect(() => {
+    if (isContentLoaded) {
+      console.log('Component has finished loading.');
+    }
+  }, [isContentLoaded]);
+
 
   return (
       <UserContextProvider>
         <div>
           <Header />
-           
-              <Component {...pageProps} /> <Footer />
+              <div className="wrapper">
+              <Component {...pageProps} onLoad={() => setIsContentLoaded(true)}  />
+              </div>
+              
+               <Footer />
+
     
         </div>
       </UserContextProvider>

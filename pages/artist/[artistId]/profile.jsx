@@ -15,9 +15,8 @@ export default function ImageForm() {
   const [imageData, setImageData] = useState('');
 
   const { tattooStyles, setTattooStyles, artistIdNew, setArtistProfileData } = useUserData();
+
   console.log(tattooStyles)
-  const [selectedStyles, setSelectedStyles] = useState(tattooStyles);
-  console.log(selectedStyles)
   const tattooStylesArray = [
     'American Traditional',
     'Japanese Traditional',
@@ -34,17 +33,19 @@ export default function ImageForm() {
   ];
 
   function toggleSelectedStyle(style) {
-    if (!selectedStyles.includes(style)) {
-      const updatedSelectedStyles = [...selectedStyles, style];
-      setSelectedStyles(updatedSelectedStyles);
-      setTattooStyles(updatedSelectedStyles);
-      saveTattoosToArtist(artistIdNew, style);
+    const updatedTattooStyles = [...tattooStyles];
+
+    if (!updatedTattooStyles.includes(style)) {
+      saveTattoosToArtist(artistIdNew, style)
+      updatedTattooStyles.push(style);
     } else {
-      const updatedSelectedStyles = selectedStyles.filter((s) => s !== style);
-      setSelectedStyles(updatedSelectedStyles);
-      setTattooStyles(updatedSelectedStyles);
-      deleteTattoosFromArtist(artistIdNew, style);
+      const index = updatedTattooStyles.indexOf(style);
+      if (index !== -1) {
+        updatedTattooStyles.splice(index, 1);
+        deleteTattoosFromArtist(artistIdNew, style)
+      }
     }
+    setTattooStyles(updatedTattooStyles);
   }
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function ImageForm() {
     };
 
     fetchData();
-  }, [artistIdNew]);
+  }, [artistIdNew, tattooStyles]);
 
 
 
@@ -119,23 +120,23 @@ export default function ImageForm() {
                 <div className="card " >
                   <h2 className="custom-card-header">Select your preferred tattoo styles</h2>
                   <div style={{ padding: '10px' }}>
-                    <form>
-                      {tattooStylesArray.map((style, index) => (
-                        <input
-                          key={index}
-                          onClick={() => toggleSelectedStyle(style)}
-                          className={`btn mx-2 ${selectedStyles.includes(style) ? 'selected' : 'button'}`}
-                          style={{
-                            backgroundColor: selectedStyles.includes(style) ? 'green' : '#F27178',
-                            color: 'white',
-                            borderRadius: '20px',
-                            marginTop: '3px',
-                          }}
-                          type="button"
-                          value={style}
-                        />
-                      ))}
-                    </form>
+                  {tattooStylesArray.map((style, index) => (
+              <input
+                key={index}
+             
+                className={`btn mx-2 ${tattooStyles.includes(style) ? 'selected' : 'button'}`}
+                style={{
+                  backgroundColor: tattooStyles.includes(style) ? 'green' : '#F27178',
+                  color: 'white',
+                  borderRadius: '20px',
+                  marginTop: '3px',
+                }}
+                onClick={() => toggleSelectedStyle(style)}
+                type="button"
+                value={style}
+         
+              />
+            ))}
                   </div>
                 </div>
               </div>

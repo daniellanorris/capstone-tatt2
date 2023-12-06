@@ -38,16 +38,12 @@ const ImageUploadForm = () => {
       } else {
         alert('Image uploaded successfully.');
   
-  
-        // S3 URL for storage
         const s3Url = data.Location;
-  
-        // Client
+
         const imageUrl = URL.createObjectURL(selectedFile);
         setImageData(imageUrl);
   
-        // Send the S3 URL to the API
-        const imageUrls = [s3Url]; // Store the URL(s) in an array
+        const imageUrls = [s3Url]; 
         sendImageUrlsToAPI(imageUrls);
       }
     });
@@ -57,7 +53,7 @@ const ImageUploadForm = () => {
    
     fetch(`/api/artist/${artistIdNew}/images`, {
       method: 'POST',
-      body: JSON.stringify({ imageUrls }), // Send the array of image URLs
+      body: JSON.stringify({ imageUrls }), 
       headers: {
         'Content-Type': 'application/json',
       },

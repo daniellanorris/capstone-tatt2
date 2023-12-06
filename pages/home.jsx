@@ -9,7 +9,7 @@ import { calculateDistance } from '../config/db/controllers/findDistance';
 import FilterDistance from '../config/db/controllers/filterDistance'
 
 
-export default function Home() {
+export default function Home({onLoad}) {
     const [userData, setUser] = useState(null);
     const [artistData, setArtistData] = useState({ data: [] });
     const [error, setError] = useState(null);
@@ -40,6 +40,12 @@ export default function Home() {
         setSelectedArtist
 
     } = useUserData();
+
+    useEffect(() => {
+
+        onLoad();
+      }, []);
+    
 
     const { geolocationData } = GeoLocationData();
 
@@ -596,47 +602,44 @@ export default function Home() {
                                 </div>
                             </div>
 
-                        ) : (
-                            <div className="container pt-4">
-                                <div className="center">
-                                    <div style={{ width: "100%" }}>
-                                        {error ? (
-                                            <p>Error fetching artists: {error}</p>
-                                        ) : (
-                                            <ul style={{ padding: "0px", width: "75%" }}>
-                                                {artistsWithDistance.map((item, index) => (
-                                                    <div key={index} className="card m-4 d-flex justify-content-end">
-                                                        <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
-                                                            <h3 className="custom-card-header">
-                                                                {item.firstname} {item.lastname}
-                                                            </h3>
-                                                            <div className="container column">
-                                                                <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                                    <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
-
-                                                                </div>
-
-                                                            </div>
-                                                            <p>@{item.username}</p>
-                                                            <h3 style={{ color: "purple" }}>{item.distance2} miles away </h3>
-
-                                                        </Link>
-                                                        {isUser ? (
-                                                            <button
-                                                                style={{ width: "50%" }}
-                                                                className={`button ${isArtistSaved ? 'selected' : ''}`}
-                                                                onClick={() => saveArtist(item._id, userId)}
-                                                            >
-                                                                {isArtistSaved === true ? 'Saved Artist' : 'Save Artist'}
-                                                            </button>
-                                                        ) : null}
+                        ) : (<div className="container pt-4">
+                        <div className="row justify-content-center">
+                            <div className="col-md-8 text-center">
+                                {error ? (
+                                    <p>Error fetching artists: {error}</p>
+                                ) : (
+                                    <ul style={{ padding: "0px", width: "100%" }}>
+                                        {artistsWithDistance.map((item, index) => (
+                                            <div key={index} className="card m-4 center">
+                                                <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
+                                                    <h3 className="custom-card-header">
+                                                        {item.firstname} {item.lastname}
+                                                    </h3>
+                                                    <div className="container column">
+                                                        <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                            <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
+                                                        </div>
                                                     </div>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                </div>
+                                                    <p>@{item.username}</p>
+                                                    <h3 style={{ color: "purple" }}>{item.distance2} miles away </h3>
+                                                </Link>
+                                                {isUser ? (
+                                                    <button
+                                                        style={{ width: "50%" }}
+                                                        className={`button ${isArtistSaved ? 'selected' : ''}`}
+                                                        onClick={() => saveArtist(item._id, userId)}
+                                                    >
+                                                        {isArtistSaved === true ? 'Saved Artist' : 'Save Artist'}
+                                                    </button>
+                                                ) : null}
+                                            </div>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
+                        </div>
+                    </div>
+                    
                         )
                     )}
                     {message && <p>{message}</p>}

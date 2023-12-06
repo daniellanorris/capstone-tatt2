@@ -2,13 +2,10 @@ import React from 'react';
 import AWS from 'aws-sdk';
 import { useUserData } from '../context/userContext';
 
-const dotenv = require('dotenv');
-dotenv.config({ path: '.env.local' });
-
 
 const UserImageUploadForm = () => {
   const { selectedFile, setSelectedFile, profileData, setProfileData, userId} = useUserData();
-
+console.log(userId)
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -41,23 +38,24 @@ const UserImageUploadForm = () => {
         alert('Image uploaded successfully.');
   
   
-        // S3 URL for storage
+     
         const s3Url = data.Location;
   
         const profileUrl = URL.createObjectURL(selectedFile);
         setProfileData(profileUrl);
   
-        const profileUrls = s3Url;
+        const profileUrls = [s3Url];
         sendImageUrlsToAPI(profileUrls);
       }
     });
   };
   
   const sendImageUrlsToAPI = (profileUrls) => {
+    console.log(userId)
    
     fetch(`/api/user/${userId}/images`, {
       method: 'POST',
-      body: JSON.stringify({ profileUrls }), // Send the array of image URLs
+      body: JSON.stringify({userId, profileUrls}), 
       headers: {
         'Content-Type': 'application/json',
       },
