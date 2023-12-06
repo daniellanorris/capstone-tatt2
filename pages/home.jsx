@@ -188,6 +188,7 @@ export default function Home({ onLoad }) {
 
             if (isTattooStyle && Object.values(selectedButtons).some((isSelected) => isSelected)) {
                 filteredArtists = filterArtistsByTattooStyle(artistData.data, selectedStyles);
+                filteredArtists = filterArtistsByDistance(filteredArtists)
             }
 
             return filteredArtists.map((artist) => {
@@ -572,14 +573,13 @@ export default function Home({ onLoad }) {
                                                             <h3 className="custom-card-header">
                                                                 {item.firstname} {item.lastname}
                                                             </h3>
-
+                                                            
                                                             <div style={{ borderRadius: '50%', border: '8px solid orange', overflow: 'hidden', width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                                                                 <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
                                                             </div>
                                                             <p>@{item.username}</p>
 
                                                             <h3 style={{ color: "purple" }}>{item.distance2} miles away </h3>
-
 
                                                             {isUser ? (
                                                                 <button
@@ -696,12 +696,11 @@ export default function Home({ onLoad }) {
                                                         <h3 className="custom-card-header">
                                                             {item.firstname} {item.lastname}
                                                         </h3>
-                                                        <div className="container column">
-                                                            <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                        <div style={{ borderRadius: '50%', border: '8px solid orange', overflow: 'hidden', width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                                                                 <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
                                                             </div>
-                                                        </div>
-                                                        <p>@{item.username}</p>
+                                                            <p>@{item.username}</p>
+
                                                         <h3 style={{ color: "purple" }}>{item.distance2} miles away </h3>
                                                     </Link>
                                                     {isUser ? (

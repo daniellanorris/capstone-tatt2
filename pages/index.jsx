@@ -1,14 +1,16 @@
 export default function LandingPage() {
     return (
-        <div className="index-bg">
+        <div className="index-bg" style={{paddingBottom: "50px"}}>
             <div
                 className="row row-column-fix container d-flex mt-4"
                 style={{ zIndex: "2" }}
             >
-                <h1>
-                    Welcome to Tatt(2), </h1> <h3>the Web Application that brings together tattoo
+                <div style={{backgroundColor: "white"}}>
+                <h1 >
+                    Welcome to Tatt(2), </h1> <h3 >the Web Application that brings together tattoo
                         seekers, and tattoo artists!
                 </h3>
+                </div>
                 <div
                     className="col column-fix mt-4"
                     style={{
