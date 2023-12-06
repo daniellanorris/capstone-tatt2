@@ -94,49 +94,53 @@ export default function ImageForm() {
 
   return (
     <div style={{ paddingBottom: "300px" }} className="container row">
-      <button className="col-1" onClick={goBack}> Go Back </button>
+      <button style={{ width: "75px" }} onClick={goBack}> Back </button>
       {artistIdNew == artistId ? (
-        <div>
-          <div className="container row d-flex">
-            <div class="card col m-1" style={{ padding: "0px" }}>
-              <h2 className="custom-card-header">Image Upload</h2>
-              <div style={{ padding: "0px" }}>
-                <ImageUploadForm />
-                {imageData && <img src={imageData} alt="Artist Image" />}
+        <>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <div className="card" style={{ padding: "0px" }}>
+                  <h2 className="custom-card-header">Image Upload</h2>
+                  <div style={{ padding: "10px" }}>
+                    <p>Select an image to update your profile picture!</p>
+                    <ImageUploadForm />
+                    {imageData && <img src={imageData} alt="Artist Image" />}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="card col m-1" style={{ padding: "0px" }}>
-              <h2 className="custom-card-header">Change Your Profile Picture</h2>
-              <div style={{ padding: "10px" }}>
-                <p>Select an image to update your profile picture!</p>
-
-                <ProfileUploadForm />
+              <div className="col-md-6 mb-3">
+                <div className="card" style={{ padding: "0px" }}>
+                  <h2 className="custom-card-header">Change Your Profile Picture</h2>
+                  <div style={{ padding: "10px" }}>
+                    <p>Select an image to update your profile picture!</p>
+                    <ProfileUploadForm />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div className="container row d-flex">
             <div className="col">
               <div className="grid column">
-                <div className="card " >
+                <div className="card ">
                   <h2 className="custom-card-header">Select your preferred tattoo styles</h2>
                   <div style={{ padding: '10px' }}>
-                  {tattooStylesArray.map((style, index) => (
-              <input
-                key={index}
-             
-                className={`btn mx-2 ${tattooStyles.includes(style) ? 'selected' : 'button'}`}
-                style={{
-                  backgroundColor: tattooStyles.includes(style) ? 'green' : '#F27178',
-                  color: 'white',
-                  borderRadius: '20px',
-                  marginTop: '3px',
-                }}
-                onClick={() => toggleSelectedStyle(style)}
-                type="button"
-                value={style}
-         
-              />
-            ))}
+                    {tattooStylesArray.map((style, index) => (
+                      <input
+                        key={index}
+                        className={`btn mx-2 ${tattooStyles.includes(style) ? 'selected' : 'button'}`}
+                        style={{
+                          backgroundColor: tattooStyles.includes(style) ? 'green' : '#F27178',
+                          color: 'white',
+                          borderRadius: '20px',
+                          marginTop: '3px'
+                        }}
+                        onClick={() => toggleSelectedStyle(style)}
+                        type="button"
+                        value={style}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -154,16 +158,16 @@ export default function ImageForm() {
                 <div className="card">
                   <h2 className="custom-card-header"> Edit Bio</h2>
                   <div style={{ padding: '10px' }}>
-                    <UploadBio artistId={artistId} />
+                    <UploadBio artistId={artistId} style={{maxWidth: "100%"}} />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-      ) : (<h3> This is not your profile to edit, back off! </h3>)}
-
+        </>
+      ) : (
+        <h3> This is not your profile to edit, back off! </h3>
+      )}
     </div>
   );
-}
+      }  

@@ -80,7 +80,7 @@ console.log(userId)
         <div className="col-md-6">
           <input type="file" onChange={handleFileChange} className="form-control mb-3" />
           <button onClick={handleUpload} className="btn btn-primary">Upload Image</button>
-          {profileData && (
+          {profileData !== null || undefined && (
             <img src={profileData} alt="Uploaded Image" className="img-fluid mt-3" style={{width:"100px", height:"auto"}} />
           )}
         </div>

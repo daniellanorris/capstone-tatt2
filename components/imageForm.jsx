@@ -75,7 +75,7 @@ const ImageUploadForm = () => {
   return (
     <div style={{maxWidth: "200px"}}>
       <input type="file" onChange={handleFileChange} className="form-control mb-3" style={{maxWidth: "300px"}}/>
-      <button className="btn btn-primary" onClick={handleUpload}>Upload Image</button>
+      <button onClick={handleUpload}>Upload Image</button>
       {imageData && <img src={imageData} alt="Uploaded Image" className="img-fluid mt-3" width="200px" height="auto"/>}
     </div>
   );

@@ -69,7 +69,7 @@ const ProfileUploadForm = () => {
 
   return (
     <div iv style={{ maxWidth: "200px" }}>
-      <input type="file" onChange={handleFileChange} style={{ maxWidth: "300px" }} />
+      <input type="file" onChange={handleFileChange} className="form-control mb-3" style={{ maxWidth: "300px" }} />
       <button onClick={handleUpload}>Upload Image</button>
 
       {artistProfileData && <img src={artistProfileData} alt="Uploaded Image" className="img-fluid mt-3" style={{ width: '100px' }} />}

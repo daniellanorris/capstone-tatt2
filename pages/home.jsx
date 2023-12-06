@@ -9,17 +9,32 @@ import { calculateDistance } from '../config/db/controllers/findDistance';
 import FilterDistance from '../config/db/controllers/filterDistance'
 
 
-export default function Home({onLoad}) {
+export default function Home({ onLoad }) {
     const [userData, setUser] = useState(null);
     const [artistData, setArtistData] = useState({ data: [] });
     const [error, setError] = useState(null);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const [distanceFiltered, setDistance] = useState(100)
+    const [distanceFiltered, setDistance] = useState(10000)
     const [distanceTop, setDistanceTop] = useState(0)
     const [distanceSelect, setDistanceSelected] = useState(false)
     const [scrollDirection, setScrollDirection] = useState('down');
     const [scrollPosition, setScrollPosition] = useState(0);
+    const { geolocationData } = GeoLocationData();
+    const [isTattooStyle, setIsTattooStyle] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(false);
+    const [artistId, setArtistSelect] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [isArtistSaved, setIsArtistSaved] = useState(false);
+    const [selectedStyles, setSelectedStyles] = useState([])
+
+
+    const [selectedButtons, setSelectedButtons] = useState({
+        location: false,
+        likes: false,
+        tattoostyle: false,
+
+    });
 
     const {
         userId,
@@ -41,13 +56,35 @@ export default function Home({onLoad}) {
 
     } = useUserData();
 
+
+
+    const tattooStylesArray = [
+        'American Traditional',
+        'Japanese Traditional',
+        'Fine-line',
+        'Realistic',
+        'Surrealist',
+        'Blackwork',
+        'Neo Traditional',
+        'Watercolor',
+        'Abstract',
+        'New School',
+        'Tribal',
+        'Stick and Poke'
+    ];
+
     useEffect(() => {
 
         onLoad();
-      }, []);
-    
+    }, []);
 
-    const { geolocationData } = GeoLocationData();
+    const filterByStyle = (style) => {
+        if (!selectedButtons[style]) {
+            setSelectedStyles((prevStyles) => [...prevStyles, style]);
+        } else {
+            setSelectedStyles((prevStyles) => prevStyles.filter((selectedStyle) => selectedStyle !== style));
+        }
+    };
 
     const updateArtistData = (geolocationData) => {
         if (geolocationData && geolocationData.address) {
@@ -62,7 +99,12 @@ export default function Home({onLoad}) {
         return { lat: null, lon: null };
     };
 
-    // checking for top of the dark card component
+    const { lat, lon } = updateArtistData(geolocationData);
+
+    if (lat !== null && lon !== null) {
+        setUserData(lat, lon);
+    }
+
     useEffect(() => {
         const containerHeight = () => {
             const darkCardContainer = document.querySelector('.dark-card');
@@ -103,48 +145,82 @@ export default function Home({onLoad}) {
         }
     }, [geolocationData]);
 
+
+    const filterArtistsByTattooStyle = (artists, selectedStyles) => {
+        return artists.filter((artist) => {
+            const hasSelectedStyle = selectedStyles.length > 0;
+            console.log(selectedStyles)
+            const isTattooStyleFiltered = hasSelectedStyle && selectedStyles.some(style => artist.tattooStyle.includes(style));
+
+            return (!hasSelectedStyle && !isTattooStyle) || isTattooStyleFiltered;
+        });
+    };
+
+    const filterArtistsByDistance = (filteredArtists) => {
+        if (distanceSelect) {
+            return filteredArtists.filter((artist) => {
+                let artistLat = null;
+                let artistLon = null;
+
+                if (artist.location) {
+                    const locationArray = artist.location.split(',');
+                    artistLat = locationArray[0];
+                    artistLon = locationArray[1];
+                }
+
+                const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
+                const distance2 = Math.round(distance);
+
+                return distance2 <= distanceFiltered;
+            });
+        } else {
+            return filteredArtists;
+        }
+    };
+
     const artistsWithDistance = useMemo(() => {
         if (artistData && artistData.data && geolocationData && geolocationData.address) {
-            return artistData.data
-                .filter((artist) => {
-                    let artistLat = null;
-                    let artistLon = null;
+            let filteredArtists = [...artistData.data];
 
-                    if (artist.location) {
-                        const locationArray = artist.location.split(',');
-                        artistLat = locationArray[0];
-                        artistLon = locationArray[1];
-                    }
+            if (!isTattooStyle || Object.values(selectedButtons).some((isSelected) => isSelected)) {
+                filteredArtists = filterArtistsByDistance(filteredArtists);
+            }
 
-                    const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
-                    const distance2 = Math.round(distance);
+            if (isTattooStyle && Object.values(selectedButtons).some((isSelected) => isSelected)) {
+                filteredArtists = filterArtistsByTattooStyle(artistData.data, selectedStyles);
+            }
 
+            return filteredArtists.map((artist) => {
+                let artistLat = null;
+                let artistLon = null;
 
-                    return distance2 <= distanceFiltered;
-                })
-                .map((artist) => {
-                    let artistLat = null;
-                    let artistLon = null;
+                if (artist.location) {
+                    const locationArray = artist.location.split(',');
+                    artistLat = locationArray[0];
+                    artistLon = locationArray[1];
+                }
 
+                const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
+                const distance2 = Math.round(distance);
 
-                    if (artist.location) {
-                        const locationArray = artist.location.split(',');
-                        artistLat = locationArray[0];
-                        artistLon = locationArray[1];
-                    }
-
-                    const distance = calculateDistance(userLat, userLon, artistLat, artistLon);
-                    const distance2 = Math.round(distance)
-
-                    return { ...artist, distance2 };
-                });
+                return { ...artist, distance2 };
+            });
         }
         return [];
-    }, [artistData, geolocationData, userLat, userLon, distanceFiltered]);
+    }, [artistData, geolocationData, userLat, userLon, distanceFiltered, selectedButtons]);
 
-    const [tattooStyle, setIsTattooStyle] = useState(false);
-    const [selectedButtons, setSelectedButtons] = useState(false);
-    const [isDesktop, setIsDesktop] = useState(false);
+
+
+    const tattooDistance = useMemo(() => {
+        if (artistsWithDistance && isTattooStyle) {
+            return artistsWithDistance.filter((artist) =>
+                tattooStylesArray.some((style) => artist.tattooStyle.includes(style))
+            );
+        }
+
+
+        return artistsWithDistance;
+    }, [artistsWithDistance, isTattooStyle, selectedButtons]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -160,11 +236,8 @@ export default function Home({onLoad}) {
                 window.removeEventListener('resize', handleResize);
             };
         }
-    }, []); // Empty dependency array ensures this effect runs once after initial render
+    }, []);
 
-    const [artistId, setArtistSelect] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [isArtistSaved, setIsArtistSaved] = useState(false);
 
 
     useEffect(() => {
@@ -244,6 +317,7 @@ export default function Home({onLoad}) {
 
     useEffect(() => {
         if (selectedArtist && typeof selectedArtist === 'object') {
+            console.log(selectedArtist)
 
         } else {
 
@@ -254,16 +328,42 @@ export default function Home({onLoad}) {
 
     }, [artistIdNew]);
 
+
+
     const changeButtonColor = (buttonName) => {
-        setSelectedButtons((prevState) => ({
-            ...prevState,
-            [buttonName]: !prevState[buttonName],
-        }));
+        setSelectedButtons((prevButtons) => {
+            const newButtons = { ...prevButtons, [buttonName]: !prevButtons[buttonName] };
+
+            const hasSelectedStyle = Object.values(newButtons).some((isSelected) => isSelected);
+
+            if (!hasSelectedStyle) {
+                setIsTattooStyle(false);
+                setDistanceSelected(false);
+            }
+
+            return newButtons;
+        });
     };
 
     async function tattooStyles() {
         setIsTattooStyle((prevState) => !prevState);
+
     }
+
+
+    const distances = () => {
+        if (distanceSelect === false) {
+            setDistanceSelected(true)
+            setDistance(100)
+            return
+        }
+        setDistanceSelected(false)
+        setDistance(10000)
+
+
+
+    }
+
 
     async function setSize() {
         setIsDesktop(window.innerWidth > 780);
@@ -353,19 +453,7 @@ export default function Home({onLoad}) {
 
     const handleFilterDistance = (value) => {
         setDistance(value)
-
-
     };
-
-    const distances = () => {
-        if (distanceSelect === false) {
-            setDistanceSelected(true)
-            return
-        }
-        setDistanceSelected(false)
-
-
-    }
 
 
 
@@ -434,32 +522,22 @@ export default function Home({onLoad}) {
                                     </div>
                                     <div>
 
-
-                                        {tattooStyle === true ? (
+                                        {isTattooStyle === true ? (
                                             <div className="pt-4">
-                                                <h2> Select tattoo style(s) </h2>
+                                                <h2>Select tattoo style(s)</h2>
                                                 <div className="m-4 p-2">
-                                                    <button
-                                                        buttonname="American Traditional"
-                                                        className={selectedButtons['American Traditional'] ? 'selected' : ''}
-                                                        onClick={() => changeButtonColor('American Traditional')}
-                                                    >
-                                                        American Traditional
-                                                    </button>
-                                                    <button
-                                                        buttonname="Japanese Traditional"
-                                                        className={selectedButtons['Japanese Traditional'] ? 'selected' : ''}
-                                                        onClick={() => changeButtonColor('Japanese Traditional')}
-                                                    >
-                                                        Japanese Traditional
-                                                    </button>
-                                                    <button
-                                                        buttonname="Fine Line"
-                                                        className={selectedButtons['Fine Line'] ? 'selected' : ''}
-                                                        onClick={() => changeButtonColor('Fine Line')}
-                                                    >
-                                                        Fine Line
-                                                    </button>
+                                                    {tattooStylesArray.map((style, index) => (
+                                                        <button
+                                                            key={index}
+                                                            className={selectedButtons[style] ? 'selected' : ''}
+                                                            onClick={() => {
+                                                                changeButtonColor(style);
+                                                                filterByStyle(style);
+                                                            }}
+                                                        >
+                                                            {style}
+                                                        </button>
+                                                    ))}
                                                 </div>
                                             </div>
                                         ) : null}
@@ -539,16 +617,19 @@ export default function Home({onLoad}) {
                                                                                     <img src={selectedArtist.profilePicture ? selectedArtist.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${selectedArtist.firstname} ${selectedArtist.lastname}`} />
                                                                                 </div>
                                                                             </div>
-                                                                            {selectedArtist.tattooStyle && selectedArtist.tattooStyle.length > 0 && (
-                                                                                <div className="col-9" style={{ padding: "0px" }} >
-
-                                                                                    {selectedArtist.tattooStyle.map((style, index) => (
-                                                                                        <span key={index}><em>{index > 0 ? ', ' : ''}{style}</em></span>
-                                                                                    ))}
-
-                                                                                </div>
-                                                                            )}
+                                                                            <div className="col-7">
+                                                                                {selectedArtist?.tattooStyle && selectedArtist?.tattooStyle.length > 0 && (
+                                                                                    <h3>
+                                                                                        {selectedArtist.tattooStyle
+                                                                                            .filter(style => style !== null)
+                                                                                            .map((style, index) => (
+                                                                                                <span style={{ color: "purple" }} key={index}><em>{index > 0 ? ', ' : ''}{style}</em></span>
+                                                                                            ))}
+                                                                                    </h3>
+                                                                                )}
+                                                                            </div>
                                                                         </div>
+
                                                                         <div className="col-4">
                                                                             <ArtistDetails artistId={selectedArtist._id} userId={userId} />
                                                                         </div>
@@ -556,7 +637,7 @@ export default function Home({onLoad}) {
                                                                         <h3 style={{ color: "purple" }}>{selectedArtist.distance2} miles away </h3>
 
                                                                         <div>
-                                                                            <div className="row grid-big-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                            <div className="row grid-big-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', maxHeight: "300px", overflowY: "auto" }}>
                                                                                 {Object.values(selectedArtist.image).map((imageUrl, index) => (
                                                                                     <div key={index} className="col-1 mx-0 p-0 grid-container" style={{ textAlign: 'center' }}>
                                                                                         <img
@@ -603,43 +684,43 @@ export default function Home({onLoad}) {
                             </div>
 
                         ) : (<div className="container pt-4">
-                        <div className="row justify-content-center">
-                            <div className="col-md-8 text-center">
-                                {error ? (
-                                    <p>Error fetching artists: {error}</p>
-                                ) : (
-                                    <ul style={{ padding: "0px", width: "100%" }}>
-                                        {artistsWithDistance.map((item, index) => (
-                                            <div key={index} className="card m-4 center">
-                                                <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
-                                                    <h3 className="custom-card-header">
-                                                        {item.firstname} {item.lastname}
-                                                    </h3>
-                                                    <div className="container column">
-                                                        <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                            <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
+                            <div className="row justify-content-center">
+                                <div className="col-md-8 text-center">
+                                    {error ? (
+                                        <p>Error fetching artists: {error}</p>
+                                    ) : (
+                                        <ul style={{ padding: "0px", width: "100%" }}>
+                                            {artistsWithDistance.map((item, index) => (
+                                                <div key={index} className="card m-4 center">
+                                                    <Link href="/artist/[artistId]" as={`/artist/${item._id}`}>
+                                                        <h3 className="custom-card-header">
+                                                            {item.firstname} {item.lastname}
+                                                        </h3>
+                                                        <div className="container column">
+                                                            <div style={{ borderRadius: "50%", border: "8px solid orange", overflow: "hidden", width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                                                <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <p>@{item.username}</p>
-                                                    <h3 style={{ color: "purple" }}>{item.distance2} miles away </h3>
-                                                </Link>
-                                                {isUser ? (
-                                                    <button
-                                                        style={{ width: "50%" }}
-                                                        className={`button ${isArtistSaved ? 'selected' : ''}`}
-                                                        onClick={() => saveArtist(item._id, userId)}
-                                                    >
-                                                        {isArtistSaved === true ? 'Saved Artist' : 'Save Artist'}
-                                                    </button>
-                                                ) : null}
-                                            </div>
-                                        ))}
-                                    </ul>
-                                )}
+                                                        <p>@{item.username}</p>
+                                                        <h3 style={{ color: "purple" }}>{item.distance2} miles away </h3>
+                                                    </Link>
+                                                    {isUser ? (
+                                                        <button
+                                                            style={{ width: "50%" }}
+                                                            className={`button ${isArtistSaved ? 'selected' : ''}`}
+                                                            onClick={() => saveArtist(item._id, userId)}
+                                                        >
+                                                            {isArtistSaved === true ? 'Saved Artist' : 'Save Artist'}
+                                                        </button>
+                                                    ) : null}
+                                                </div>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
+
                         )
                     )}
                     {message && <p>{message}</p>}

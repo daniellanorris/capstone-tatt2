@@ -6,6 +6,7 @@ export default function FilterDistance({ onFilterDistance }) {
     const [sliderValue, setSliderValue] = useState(100);
   function filterDistance(value) {
     setSliderValue(value)
+    console.log(sliderValue)
 
     if (onFilterDistance) {
       onFilterDistance(value);

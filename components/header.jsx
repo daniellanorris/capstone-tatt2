@@ -36,12 +36,6 @@ export default function Header() {
                   <Nav.Link href="/home" style={{ color: "black" }}>
                     <h3>Home</h3>
                   </Nav.Link>
-                  <Nav.Link href="/about" style={{ color: "black" }}>
-                    <h3>About</h3>
-                  </Nav.Link>
-                  <Nav.Link href="/contact" style={{ color: "black" }}>
-                    <h3>Contact</h3>
-                  </Nav.Link>
                   {isUser && (
                     <Nav.Link href={`/user/${userId}`} style={{ color: "black" }}>
                       <h3>User Profile</h3>

@@ -26,7 +26,7 @@ function MyApp({ Component, pageProps }) {
               <Component {...pageProps} onLoad={() => setIsContentLoaded(true)}  />
               </div>
               
-               <Footer />
+               <Footer/>
 
     
         </div>
