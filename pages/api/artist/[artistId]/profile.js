@@ -23,31 +23,30 @@ export default async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
       }
       break;
+      
       case 'POST':
-        try {
-            const artistId = req.query.artistId; // Obtain artistId correctly
-            const artist = await Artist.findById(artistId);
-    
-            if (!artist) {
-                return res.status(404).json({ success: false, message: 'Artist not found' });
-            }
-    
-            const { style } = req.body; 
-    
-            if (!style) {
-                return res.status(400).json({ success: false, message: 'Missing required field: style' });
-            }
-    
-            artist.tattooStyle.push(style);
-    
-            await artist.save();
-            console.log(artist);
-            res.status(201).json({ success: true, data: artist });
-        } catch (error) {
-            res.status(500).json({ success: false, error: error.message });
+      try {
+        const artistId = req.query.artistId;
+        const artist = await Artist.findById(artistId);
+
+        if (!artist) {
+          return res.status(404).json({ success: false, message: 'User or artist not found' });
         }
-        break;
-    
+
+        const {profileUrls} = req.body
+
+  
+        artist.profilePicture = profileUrls
+
+        await artist.save();
+
+        res.status(201).json({ success: true, message: 'Artist saved successfully' });
+
+      } catch (error) {
+        console.error('POST Error:', error);
+        res.status(500).json({ success: false, error: error.message });
+      }
+      break;
 
     default:
       res.status(400).json({ success: false, message: 'Invalid method' });

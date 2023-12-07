@@ -91,6 +91,7 @@ const UploadBio = ({ artistId }) => {
   return (
     <form onSubmit={handleSubmit}>
       <textarea
+      style={{maxWidth: "100%"}} 
         value={input}
         onChange={handleInputChange}
         rows={10}

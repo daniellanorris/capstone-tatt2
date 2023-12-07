@@ -149,7 +149,6 @@ export default function Home({ onLoad }) {
     const filterArtistsByTattooStyle = (artists, selectedStyles) => {
         return artists.filter((artist) => {
             const hasSelectedStyle = selectedStyles.length > 0;
-            console.log(selectedStyles)
             const isTattooStyleFiltered = hasSelectedStyle && selectedStyles.some(style => artist.tattooStyle.includes(style));
 
             return (!hasSelectedStyle && !isTattooStyle) || isTattooStyleFiltered;
@@ -402,55 +401,41 @@ export default function Home({ onLoad }) {
         }
     }, [selectedArtist, savedArtists]);
 
+    
     const saveArtist = async (artistId, userId) => {
         try {
-            const isSaved = artistStates[artistId];
 
-            if (!isSaved) {
-
-                const isArtistSaved = savedArtists.some(
-                    (artist) =>
-                        artist.data &&
-                        Array.isArray(artist.data) &&
-                        artist.data.some((item) => item._id === artistId)
-                );
-
-                setArtistStates((prevStates) => ({
-                    ...prevStates,
-                    [artistId]: true,
-                }));
-
-
-                const res = await fetch(`/api/user/${userId}/savedArtists`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ artistId, userId }),
-                });
-
-                if (res.status === 201) {
-                    setSavedArtists((prevSavedArtists) => [
-                        ...prevSavedArtists,
-                        { artistId, userId },
-                    ]);
-
-
-                    setMessage('Artist added successfully');
-                    setIsArtistSaved(true);
-                } else {
-                    console.error('Failed to save artist');
-                    setMessage('Failed to save artist');
-                }
-            } else {
-
-            }
+                    const res = await fetch(`/api/user/${userId}/savedArtists`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ artistId, userId }),
+                    });
+    
+                    if (res.status === 201) {
+            
+                        setSavedArtists((prevSavedArtists) => [
+                            ...prevSavedArtists,
+                            { artistId, userId },
+                        ]);
+                        setSelected((prevSelected) => [
+                            ...prevSelected, 
+                            {artistId}
+                        ])
+    
+                        setMessage('Artist added successfully');
+                        setIsArtistSaved(true);
+                    } else {
+                        console.error('Failed to save artist');
+                        setMessage('Failed to save artist');
+                    }
+               
         } catch (error) {
             console.error('Error saving artist:', error);
             setMessage('Error saving artist');
         }
     };
-
 
     const handleFilterDistance = (value) => {
         setDistance(value)
@@ -573,7 +558,7 @@ export default function Home({ onLoad }) {
                                                             <h3 className="custom-card-header">
                                                                 {item.firstname} {item.lastname}
                                                             </h3>
-                                                            
+
                                                             <div style={{ borderRadius: '50%', border: '8px solid orange', overflow: 'hidden', width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                                                                 <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
                                                             </div>
@@ -585,7 +570,10 @@ export default function Home({ onLoad }) {
                                                                 <button
                                                                     style={{ width: '50%' }}
                                                                     className={`button ${savedArtists && savedArtists[item._id] ? 'selected' : ''}`}
-                                                                    onClick={() => { setArtist(item._id), saveArtist(item._id, userId) }}
+                                                                    onClick={() => {
+                                                                        setArtist(item._id);
+                                                                        saveArtist(item._id, userId);
+                                                                    }}
                                                                 >
                                                                     {savedArtists && savedArtists[item._id] ? 'Saved Artist' : 'Save Artist'}
                                                                 </button>
@@ -697,9 +685,9 @@ export default function Home({ onLoad }) {
                                                             {item.firstname} {item.lastname}
                                                         </h3>
                                                         <div style={{ borderRadius: '50%', border: '8px solid orange', overflow: 'hidden', width: 100, height: 100 }} className="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                                                                <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
-                                                            </div>
-                                                            <p>@{item.username}</p>
+                                                            <img src={item.profilePicture ? item.profilePicture : './placeholder.jpeg'} width={100} height={100} alt={`${item.firstname} ${item.lastname}`} />
+                                                        </div>
+                                                        <p>@{item.username}</p>
 
                                                         <h3 style={{ color: "purple" }}>{item.distance2} miles away </h3>
                                                     </Link>

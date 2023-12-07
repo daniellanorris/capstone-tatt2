@@ -19,10 +19,13 @@ export default async (req, res) => {
         if (!user || !artistId) {
           return res.status(404).json({ success: false, message: 'User or artist not found' });
         }
-``
+        if(!user.savedArtists[artist._id]) {
         user.savedArtists.push(artist._id);
         await user.save();
-
+        }
+        else {
+          return res.status(500).json({ success: false, message: 'Artist already saved' });
+        }
         res.status(201).json({ success: true, message: 'Artist saved successfully' });
       } catch (error) {
         res.status(500).json({ success: false, error: error.message });

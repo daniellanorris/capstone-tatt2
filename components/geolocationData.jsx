@@ -4,8 +4,7 @@ export default function GeoLocationData() {
   const [geolocationData, setGeolocationData] = useState(null);
   const [geolocationReverse, setGeolocationDataReverse] = useState(null);
   const [error, setError] = useState(null);
-  const apiKey = 'prj_live_pk_aceff18739558b092e59a9c9f68ac28f06394682';
-
+  const apiKey = process.env.NEXT_PUBLIC_GEO_API_KEY
   useEffect(() => {
     const fetchData = async () => {
       try {

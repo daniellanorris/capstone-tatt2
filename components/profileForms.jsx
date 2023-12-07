@@ -35,13 +35,10 @@ const ProfileUploadForm = () => {
       } else {
         alert('Image uploaded successfully.');
 
-        // S3 URL for storage
         const s3Url = data.Location;
 
-        // Set S3 URL directly to the state
         setArtistProfileData(s3Url);
 
-        // Send S3 URL to the API
         sendProfileUrlsToAPI(s3Url);
       }
     });

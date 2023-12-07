@@ -103,7 +103,7 @@ export default function ImageForm() {
                 <div className="card" style={{ padding: "0px" }}>
                   <h2 className="custom-card-header">Image Upload</h2>
                   <div style={{ padding: "10px" }}>
-                    <p>Select an image to update your profile picture!</p>
+                    <p>Select an image to upload to your profile. This will be added to your list of images. </p>
                     <ImageUploadForm />
                     {imageData && <img src={imageData} alt="Artist Image" />}
                   </div>
@@ -158,7 +158,7 @@ export default function ImageForm() {
                 <div className="card">
                   <h2 className="custom-card-header"> Edit Bio</h2>
                   <div style={{ padding: '10px' }}>
-                    <UploadBio artistId={artistId} style={{maxWidth: "100%"}} />
+                    <UploadBio artistId={artistId}/>
                   </div>
                 </div>
               </div>
